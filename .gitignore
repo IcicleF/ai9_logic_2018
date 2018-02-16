@@ -1,0 +1,21 @@
+# Directories
+
+/.idea/*
+/cmake-build-debug/*
+/CMakeFiles/*
+ai/CMakeFiles/*
+
+# Makefile
+
+Makefile
+
+# Other CMake Files
+
+*.cmake
+CMakeCache.txt
+
+# Compiled Executables and Libraries
+
+*.exe
+*.dll
+*.a
