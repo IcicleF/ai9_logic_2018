@@ -12,33 +12,27 @@ class GameLogic;
 class MapInfo
 {
 public:
-    MapInfo();
-    ~MapInfo();
+    MapInfo() = default;
+    ~MapInfo() = default;
     std::vector<std::pair<int, Vec2> > calcCommands(GameLogic *caller);
     void placeWard(GameLogic *caller, int pid, Vec2 pos);
-    void throwBomb(GameLogic *caller, int pid, Vec2 pos);
+    void throwBomb(GameLogic *caller, int pid, Vec2 start, Vec2 end);
     void unitDied(GameLogic *caller, Vec2 pos);
 
     std::vector<PWardInfo> getWards(int pid);
+    std::vector<PBombInfo> getBombs();
     std::vector<Vec2> getCorpses();
 
 private:
-    struct WardInfo
+    struct ItemInfo
     {
-        int id;              //为了方便，给每个守卫也分配一个ID
+        int id;              //为了方便，给每个道具也分配一个ID
         int owner;           //所有者ID
         Vec2 pos;            //位置
+        Vec2 velocity;       //炸弹的速度
         int life;            //剩余时间（内部回合数）
     };
-    std::list<WardInfo> wards;
-
-    struct BombInfo
-    {
-        int owner;           //扔出该炸弹的玩家ID
-        Vec2 pos;            //爆炸位置
-        int life;            //剩余时间（内部回合数）
-    };
-    std::list<BombInfo> bombs;
+    std::list<ItemInfo> wards, bombs;
 
     struct DeathInfo
     {

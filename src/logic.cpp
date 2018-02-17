@@ -170,7 +170,7 @@ PlayerSight GameLogic::getSight(int pid)
     mgr.update();
 
     //守卫
-    res.ward = wards;
+    res.placedWard = wards;
     res.placedWardCount = wards.size();
 
     //活人
@@ -208,7 +208,28 @@ PlayerSight GameLogic::getSight(int pid)
         if (flag)
             res.corpseInSight.push_back(c);
     }
-    res.corpseInSightCount = res.corpseInSight.size();
+
+    //炸弹
+    vector<PBombInfo> bombs = mapInfo.getBombs();
+    for (auto b : bombs)
+    {
+        bool flag = false;
+        if ((b.pos - pl.position).length() < currentSight)
+            flag = true;
+        if (!flag)
+            for (auto w : wards)
+            {
+                Vec2 wardPos = w.pos;
+                if ((b.pos - wardPos).length() < WardRadius)
+                {
+                    flag = true;
+                    break;
+                }
+            }
+        if (flag)
+            res.bombInSight.push_back(b);
+    }
+    res.bombInSightCount = res.bombInSight.size();
 
     //计分板
     for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
@@ -321,7 +342,14 @@ void GameLogic::calcRound()
         if (it->second->getUnitType() == VillagerType)
             it->second->getAction();
 
-    //cout << " - - calcRound: villager movement fetched." << endl;
+    //发放工资
+    if (getCurrentRound() % SalaryPeriod == 0)
+        for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
+            if (it->second->getUnitType() == PlayerType)
+            {
+                Player *pptr = dynamic_cast<Player*>(it->second);
+                pptr->gold += Salary;
+            }
 
     //计算已经扔出的炸弹的爆炸
     vector<pair<int, Vec2> > explosions = mapInfo.calcCommands(this);
@@ -337,8 +365,6 @@ void GameLogic::calcRound()
         addCommand(BombExplode, 0, e.second);
     }
 
-    //cout << " - - calcRound: bomb explosion calculated." << endl;
-
     //计算灼烧伤害
     if (getCurrentDayPeriod() == Day && getCurrentRound() % BurnPeriod == 0)
         for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
@@ -346,11 +372,8 @@ void GameLogic::calcRound()
             Unit& unit = *(it->second);
             if (unit.getUnitType() != PlayerType || unit.hp == 0)
                 continue;
-
             damages[it->first] += BurnDamage;
         }
-
-    //cout << " - - calcRound: burn damage calculated." << endl;
 
     //处理普通攻击
     for (auto act : actions)
@@ -383,8 +406,6 @@ void GameLogic::calcRound()
             damages[target_id] += SuckDamage;
             damageGiver[target_id].insert(id);
         }
-
-    //cout << " - - calcRound: suck damage calculated." << endl;
 
     //计算单位死亡和金钱奖励
     for (auto it = damages.begin(); it != damages.end(); ++it)
@@ -469,7 +490,65 @@ void GameLogic::calcRound()
             ++it;
     }
 
-    //cout << " - - calcRound: deaths calculated." << endl;
+    //计算道具的购买
+    for (auto act : actions)
+        if (act.second.actionType == BuyItem)
+        {
+            int id = act.first;
+            if (unitInfo.find(id) == unitInfo.end())
+                continue;
+            Unit& unit = *unitInfo[act.first];
+            if (unit.getUnitType() != PlayerType || unit.hp == 0)
+                continue;
+            if (act.second.target_id == 0)          //炸弹
+            {
+                if (unit.canBuyBomb())
+                {
+                    unit.buyBomb();
+                    addCommand(BombNumberChange, id, 1);
+                    addCommand(GoldChange, id, -BombPrice);
+                }
+            }
+            else                                    //守卫
+            {
+                if (unit.canBuyWard())
+                {
+                    unit.buyWard();
+                    addCommand(WardNumberChange, id, 1);
+                    addCommand(GoldChange, id, -WardPrice);
+                }
+            }
+        }
+
+    //处理扔出炸弹和放置守卫
+    for (auto act : actions)
+    {
+        int id = act.first;
+        if (unitInfo.find(id) == unitInfo.end())
+            continue;
+        if (act.second.actionType == UseItem)
+        {
+            Unit &unit = *unitInfo[id];
+            if (unit.getUnitType() != PlayerType || unit.hp == 0 || unit.hp <= damages[unit.id])
+                continue;
+            if (act.second.target_id == 0)          //炸弹
+            {
+                if (unit.canUseBomb())
+                {
+                    unit.useBomb();
+                    mapInfo.throwBomb(this, id, unit.position, act.second.pos);
+                }
+            }
+            else                                    //守卫
+            {
+                if (unit.canUseWard() && (act.second.pos - unit.position).length() <= WardPlaceRadius)
+                {
+                    unit.useWard();
+                    mapInfo.placeWard(this, id, act.second.pos);
+                }
+            }
+        }
+    }
 
     //计算单位移动
     for (auto act : actions)
@@ -529,42 +608,6 @@ void GameLogic::calcRound()
         }
     }
 
-    //cout << " - - calcRound: all movement calculated." << endl;
-
-    //处理扔出炸弹和放置守卫
-    for (auto act : actions)
-    {
-        int id = act.first;
-        if (unitInfo.find(id) == unitInfo.end())
-            continue;
-        if (act.second.actionType == UseItem)
-        {
-            Unit &unit = *unitInfo[id];
-            if (unit.getUnitType() != PlayerType || unit.hp == 0 || unit.hp <= damages[unit.id])
-                continue;
-            if (act.second.target_id == 0)          //炸弹
-            {
-                if (unit.canUseBomb())
-                {
-                    unit.useBomb();
-                    addCommand(BombThrown, id, act.second.pos);
-                    mapInfo.throwBomb(this, id, act.second.pos);
-                }
-            }
-            else                                    //守卫
-            {
-                if (unit.canUseWard())
-                {
-                    unit.useWard();
-                    addCommand(WardPlaced, id, act.second.pos);
-                    mapInfo.placeWard(this, id, act.second.pos);
-                }
-            }
-        }
-    }
-
-    //cout << " - - calcRound: item use calculated." << endl;
-
     //死亡惩罚结束的玩家重生
     for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
         if (it->second->hp == 0 && it->second->respawnWhen == getCurrentRound())
@@ -586,39 +629,6 @@ void GameLogic::calcRound()
         unitInfo[id]->id = id;
     }
 
-    //cout << " - - calcRound: respawn calculated." << endl;
-
-    //计算道具的购买
-    for (auto act : actions)
-        if (act.second.actionType == BuyItem)
-        {
-            int id = act.first;
-            if (unitInfo.find(id) == unitInfo.end())
-                continue;
-            Unit& unit = *unitInfo[act.first];
-            if (unit.getUnitType() != PlayerType || unit.hp == 0)
-                continue;
-            if (act.second.target_id == 0)          //炸弹
-            {
-                if (unit.canBuyBomb())
-                {
-                    unit.buyBomb();
-                    addCommand(BombNumberChange, id, 1);
-                    addCommand(GoldChange, id, -BombPrice);
-                }
-            }
-            else                                    //守卫
-            {
-                if (unit.canBuyWard())
-                {
-                    unit.buyWard();
-                    addCommand(WardNumberChange, id, 1);
-                    addCommand(GoldChange, id, -WardPrice);
-                }
-            }
-        }
-
-    //cout << " - - calcRound: item buy calculated. [ALL FINISHED]" << endl;
     translateCommands();
     logicStat = DistributingCommands;
 }

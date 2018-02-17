@@ -3,13 +3,6 @@
 
 using namespace std;
 
-MapInfo::MapInfo()
-{
-    wards.clear();
-    bombs.clear();
-}
-MapInfo::~MapInfo() { }
-
 vector<pair<int, Vec2> > MapInfo::calcCommands(GameLogic *caller)
 {
     //清除所有到期的守卫
@@ -38,6 +31,13 @@ vector<pair<int, Vec2> > MapInfo::calcCommands(GameLogic *caller)
             ++it;
     }
 
+    //炸弹向前飞行
+    for (auto it = bombs.begin(); it != bombs.end(); ++it)
+    {
+        it->pos = it->pos + it->velocity;
+        caller->addCommand(MoveTo, it->id, it->pos);
+    }
+
     //记录所有到期的炸弹，引爆工作交由主逻辑进行
     vector<pair<int, Vec2> > explosions;
     for (auto it = bombs.begin(); it != bombs.end(); )
@@ -55,20 +55,25 @@ vector<pair<int, Vec2> > MapInfo::calcCommands(GameLogic *caller)
 }
 void MapInfo::placeWard(GameLogic *caller, int pid, Vec2 pos)
 {
-    WardInfo w;
+    ItemInfo w;
     w.id = caller->idManager.newID();
     w.owner = pid;
     w.pos = pos;
+    w.velocity = Vec2();
     w.life = WardDuration;
     wards.push_back(w);
+    caller->addCommand(WardPlaced, w.id, w.pos);
 }
-void MapInfo::throwBomb(GameLogic *caller, int pid, Vec2 pos)
+void MapInfo::throwBomb(GameLogic *caller, int pid, Vec2 start, Vec2 end)
 {
-    BombInfo b;
+    ItemInfo b;
+    b.id = caller->idManager.newID();
     b.owner = pid;
-    b.pos = pos;
+    b.pos = start;
     b.life = BombTrajectoryTime;
+    b.velocity = (end - start) / BombTrajectoryTime;
     bombs.push_back(b);
+    caller->addCommand(BombThrown, b.id, b.pos);
 }
 void MapInfo::unitDied(GameLogic *caller, Vec2 pos)
 {
@@ -91,6 +96,18 @@ vector<PWardInfo> MapInfo::getWards(int pid)
             p.pos = it->pos;
             res.push_back(p);
         }
+    return res;
+}
+vector<PBombInfo> MapInfo::getBombs()
+{
+    vector<PBombInfo> res;
+    for (auto it = bombs.begin(); it != bombs.end(); ++it)
+    {
+        PBombInfo p;
+        p.pos = it->pos;
+        p.velocity = it->velocity;
+        res.push_back(p);
+    }
     return res;
 }
 vector<Vec2> MapInfo::getCorpses()

@@ -19,10 +19,10 @@ enum ActionType
 enum CommandType
 {
     NoCommand,                                  //空指令
-    MoveTo,                                     //特定单位移动到特定地点
-    BombThrown,                                 //特定玩家向特定地点扔出炸弹
+    MoveTo,                                     //特定单位或炸弹移动到特定地点
+    BombThrown,                                 //特定地点扔出了一个炸弹
     BombExplode,                                //特定玩家的炸弹在特定地点爆炸
-    WardPlaced,                                 //特定玩家在特定地点放置守卫
+    WardPlaced,                                 //特定地点放置了一个守卫
     WardExpired,                                //特定守卫抵达时限而消失
     CorpseAppear,                               //特定地点出现尸体
     CorpseExpired,                              //特定尸体抵达时限而消失
@@ -72,6 +72,13 @@ struct PWardInfo
 
     PWardInfo() : life(0) { }
 };
+struct PBombInfo
+{
+    Vec2 pos;
+    Vec2 velocity;
+
+    PBombInfo() = default;
+};
 struct PUnitInfo
 {
     int id;
@@ -96,7 +103,10 @@ struct PlayerSight
     int continuousKill;
 
     int placedWardCount;
-    std::vector<PWardInfo> ward;
+    std::vector<PWardInfo> placedWard;
+
+    int bombInSightCount;
+    std::vector<PBombInfo> bombInSight;
 
     int unitInSightCount;
     std::vector<PUnitInfo> unitInSight;
