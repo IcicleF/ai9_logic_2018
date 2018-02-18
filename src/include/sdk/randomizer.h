@@ -14,6 +14,7 @@ public:
     static Randomizer* getInstance();
     ~Randomizer();
 
+    float randAxis();
     Vec2 randPosition();
     bool randSpawnJudger();
     int randWaitTime();

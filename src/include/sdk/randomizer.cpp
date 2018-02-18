@@ -28,9 +28,13 @@ Randomizer::~Randomizer()
     delete WanderRnd;
 }
 
+float Randomizer::randAxis()
+{
+    return (*AxisRnd)(*RndCore);
+}
 Vec2 Randomizer::randPosition()
 {
-    return Vec2((*AxisRnd)(*RndCore), (*AxisRnd)(*RndCore));
+    return Vec2(randAxis(), randAxis());
 }
 bool Randomizer::randSpawnJudger()
 {

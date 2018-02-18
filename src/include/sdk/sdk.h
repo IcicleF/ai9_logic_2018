@@ -9,7 +9,7 @@
 #include "randomizer.h"
 #include "router.h"
 
-namespace SDK               //todo:名字待讨论，是否封装进namespace待讨论
+namespace SDK
 {
     /**
      * reachable: 判断一个点是否可达，仅仅判断点是否位于障碍物之内。

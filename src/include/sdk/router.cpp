@@ -43,6 +43,11 @@ std::vector<Vec2> Router::Route(Vec2 start, Vec2 end)
     std::vector<Vec2> res;
     if (!Reachable(start) || !Reachable(end))
         return res;
+    if ((end - start).length() < EPS)
+    {
+        res.push_back(end);
+        return res;
+    }
 
     int Points = ObstacleCount * 4 + 2;
 

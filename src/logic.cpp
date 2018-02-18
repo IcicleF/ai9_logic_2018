@@ -39,14 +39,6 @@ void GameLogic::startGame(int _playerCount)         //初始化游戏，设置�
         unitInfo[id] = new Unit(this);
         unitInfo[id]->id = id;
         addCommand(UnitSpawn, id, unitInfo[id]->position);
-
-        //初始状态的随机等待时间
-        int hajime = Randomizer::getInstance()->randWaitTime() - (WanderIntervalLB + WanderIntervalUB) / 2;
-        if (hajime > 0)
-        {
-            unitInfo[id]->currentTarget = -1;
-            unitInfo[id]->waitUntil = hajime + 1;
-        }
     }
 
     //创建初始状态的json字符串
@@ -411,7 +403,7 @@ void GameLogic::calcRound()
     for (auto it = damages.begin(); it != damages.end(); ++it)
     {
         int id = it->first;
-        int& volume = it->second;
+        int volume = it->second;
         Unit& unit = *unitInfo[id];
         if (unit.hp > volume)       //回复效果，或者伤害尚未致死
         {
@@ -423,6 +415,7 @@ void GameLogic::calcRound()
         else                            //伤害致死；死亡角色的后处理随后进行
         {
             addCommand(HPChange, id, -unit.hp);
+			addCommand(UnitDie, id, unit.position);
             mapInfo.unitDied(this, unit.position);
             unit.hp = 0;
         }
@@ -430,7 +423,6 @@ void GameLogic::calcRound()
     for (auto it = damages.begin(); it != damages.end(); ++it)    //计算死亡惩罚
     {
         Unit& unit = *unitInfo[it->first];
-        addCommand(UnitDie, it->first, unit.position);
         if (unit.getUnitType() == PlayerType && unit.hp == 0)
         {
             unit.hp = 0;
@@ -551,16 +543,24 @@ void GameLogic::calcRound()
     }
 
     //计算单位移动
+    for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
+    {
+        Unit& unit = *(it->second);
+        unit.moved = false;
+        if (unit.hp > 0 && unit.getUnitType() == PlayerType && unit.currentTarget != -1 && unit.currentTarget < unit.targets.size())
+            actions.push_back(make_pair(it->first, Action(ContinueMovement)));
+    }
     for (auto act : actions)
     {
         ActionType type = act.second.actionType;
         if (unitInfo.find(act.first) == unitInfo.end())
             continue;
         Unit &unit = *unitInfo[act.first];
-        if (unit.hp == 0)
+        if (unit.hp == 0 || unit.moved)
             continue;
         if (type == SelectDestination || type == ContinueMovement)
         {
+            unit.moved = true;
             if (type == SelectDestination)
             {
                 if (!Router::getInstance()->Reachable(act.second.pos))
@@ -578,6 +578,8 @@ void GameLogic::calcRound()
                 if (unit.currentTarget == unit.targets.size())
                 {
                     unit.velocity = Vec2();
+                    unit.targets.clear();
+                    unit.currentTarget = -1;
                     break;
                 }
                 Vec2 direction = unit.targets[unit.currentTarget] - unit.position;
@@ -600,8 +602,12 @@ void GameLogic::calcRound()
                         unit.velocity = e0 * PlayerVelocity;
                     }
                     else
+                    {
                         unit.velocity = Vec2();
-                    break;
+                        unit.targets.clear();
+                        unit.currentTarget = -1;
+                        break;
+                    }
                 }
             }
             addCommand(MoveTo, act.first, unit.position);

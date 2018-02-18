@@ -18,6 +18,7 @@ struct Unit
     int hp;
     Vec2 position, velocity;
 
+    bool moved;
     int currentTarget;
     std::vector<Vec2> targets;
 

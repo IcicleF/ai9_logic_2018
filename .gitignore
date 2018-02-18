@@ -5,9 +5,29 @@
 /CMakeFiles/*
 ai/CMakeFiles/*
 
-# Makefile
+# MinGW Makefile
 
 Makefile
+*.cbp
+
+# Visual Studio
+
+/*.dir/*
+/Win32/*
+/x64/
+/Debug/*
+/Release/*
+ai/*.dir/*
+ai/Win32/*
+ai/x64/
+ai/Debug/*
+ai/Release/*
+*.opensdf
+*.sdf
+*.sln
+*.suo
+*.vcxproj
+*.filters
 
 # Other CMake Files
 

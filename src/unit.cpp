@@ -8,9 +8,15 @@ Unit::Unit(GameLogic *caller)
 {
     logic = caller;
     hp = PlayerHP;
-    waitUntil = 0;
     respawnWhen = -1;
+    currentTarget = -1;
     position = Router::getInstance()->availablePosition();
+
+    if (this->getUnitType() != VillagerType)
+        return;
+    int hajime = Randomizer::getInstance()->randWaitTime() - (WanderIntervalLB + WanderIntervalUB) / 2;
+    if (hajime > 0)
+        waitUntil = caller->getCurrentRound() + hajime + 1;
 }
 void Unit::getAction()
 {

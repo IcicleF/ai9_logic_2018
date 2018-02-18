@@ -2,11 +2,10 @@
 #define LITERALS_H
 
 const float PI = 3.1415926536;
-const float EPS = 1e-6;
+const float EPS = 1e-4;
 const int IINF = 99999999;
 const float FINF = 99999999.0f;
-
-const int JSONCMD_SIZE = 1200000;
+const unsigned int MAGIC = 0x30a54bf8;          //Magic Number!
 
 /*
  *  内部回合
@@ -17,13 +16,15 @@ const float InnerRoundLength = 100;             //每个内部回合的长度（
  *  地图信息
  */
 const float MapSize = 40.0;                     //正方形地图，每边均是[-MapSize, MapSize]
-const float ObsBorder = 0.05;                    //障碍物边界向外延伸的不可达区域宽度
+const float ObsBorder = 0.05;                   //障碍物边界向外延伸的不可达区域宽度
+
+
 
 /*
  *  玩家和村民
  */
 const int PlayerHP = 100;                       //玩家出生时HP
-const float PlayerVelocity = 0.4;               //玩家移动速度（每个内部回合）
+const float PlayerVelocity = 0.6;               //玩家移动速度（每个内部回合）
 const int BurnDamage = 9;                       //每一个灼烧周期玩家损失的HP
 const int BurnPeriod = 30;                      //灼烧周期长度（内部回合数）
 const int SuckDamage = 70;                      //吸血攻击力

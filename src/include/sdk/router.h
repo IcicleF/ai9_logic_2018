@@ -1,11 +1,9 @@
 #ifndef ROUTER_H
 #define ROUTER_H
 
-#include <vector>
-
 #include "sdk/defs.h"
-#include "sdk/vec2.h"
 
+#include <vector>
 #include <iostream>
 
 class Router
