@@ -14,7 +14,8 @@ public:
     virtual ~EscapeStrategy() = default;
 
     /**
-     * 随机选取tries个方向，为该方向生成一个
+     * 随机选取tries个方向，找一个“离别人最远”的地方。
+     * 判断基准是把视野内的所有单位到自己距离的倒数求和。
      */
     virtual void generateActions(const PlayerSight&, Actions*);
     virtual StrategyType getStrategyType() { return Defensive; }

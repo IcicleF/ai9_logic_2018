@@ -8,6 +8,9 @@
 #include "strategy.h"
 #include "sdk/defs.h"
 
+#include <map>
+#include <string>
+
 class ActionMaker
 {
 public:
@@ -16,13 +19,16 @@ public:
     ~ActionMaker();
 
     template <typename Tp, typename... Types>
-    void addStrategy(Types...);
+    void addStrategy(std::string, Types...);
+    void removeStrategy(std::string);
+    void removeStrategies(StrategyType);
+
     void make();
 
 private:
     Actions* actions;
     PlayerSight* sight;
-    std::vector<Strategy*> strategies;
+    std::map<std::string, Strategy*> strategies;
 };
 
 #endif //ACTIONMAKER_H

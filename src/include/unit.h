@@ -35,6 +35,8 @@ struct Unit
     virtual void clearContinuousKill() { }
     virtual bool canUseBomb() { return false; }
     virtual bool canUseWard() { return false; }
+    virtual bool hasBomb() { return false; }
+    virtual bool hasWard() { return false; }
     virtual void useBomb() { }
     virtual void useWard() { }
     virtual bool canBuyBomb() { return false; }
@@ -68,10 +70,12 @@ struct Player : public Unit
         gold = int(gold * DeathPunishment);
     }
     virtual void clearContinuousKill() { continuousKill = 0; }
-    virtual bool canUseBomb() { return hp > 0 && bombCount > 0 && bombCD == 0; }
-    virtual bool canUseWard() { return hp > 0 && wardCount > 0 && wardCD == 0; }
-    virtual void useBomb() { if (hp == 0) return; --bombCount; bombCD = BombCD; }
-    virtual void useWard() { if (hp == 0) return; --wardCount; wardCD = WardCD; }
+    virtual bool canUseBomb() { return hp > 0 && bombCD == 0; }
+    virtual bool canUseWard() { return hp > 0 && wardCD == 0; }
+    virtual bool hasBomb() { return bombCount > 0; }
+    virtual bool hasWard() { return wardCount > 0; }
+    virtual void useBomb() { if (hp == 0 || bombCount == 0 || bombCD > 0) return; --bombCount; bombCD = BombCD; }
+    virtual void useWard() { if (hp == 0 || wardCount == 0 || wardCD > 0) return; --wardCount; wardCD = WardCD; }
     virtual bool canBuyBomb() { return hp > 0 && gold >= BombPrice; }
     virtual bool canBuyWard() { return hp > 0 && gold >= WardPrice; }
     virtual void buyBomb() { if (hp == 0) return; gold -= BombPrice; ++bombCount; }

@@ -18,8 +18,6 @@ const float InnerRoundLength = 100;             //每个内部回合的长度（
 const float MapSize = 40.0;                     //正方形地图，每边均是[-MapSize, MapSize]
 const float ObsBorder = 0.05;                   //障碍物边界向外延伸的不可达区域宽度
 
-
-
 /*
  *  玩家和村民
  */

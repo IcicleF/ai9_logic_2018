@@ -21,6 +21,7 @@ struct Vec2
     float operator*(const Vec2& b) const { return x * b.y - y * b.x; }      //叉积
     Vec2 operator*(const float b) const { return Vec2(x * b, y * b); }
     Vec2 operator/(const float b) const { return Vec2(x / b, y / b); }
+    bool operator==(const Vec2& b) const { return (b - *this).len2() < EPS * EPS; }
     Vec2 rotl90() const { return Vec2(-y, x); }
     Vec2 rotr90() const { return Vec2(y, -x); }
 

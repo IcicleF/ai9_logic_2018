@@ -50,7 +50,7 @@ enum LogicStatus
 struct Action
 {
     ActionType actionType;
-    int target_id;                           //购买或使用道具时，0为地雷，1为守卫
+    int target_id;                           //购买或使用道具时，0为炸弹，1为守卫
     Vec2 pos;
 
     Action(ActionType _type = NoAction) : actionType(_type), target_id(-1) { }
@@ -90,6 +90,7 @@ struct PUnitInfo
 
 struct PlayerSight
 {
+    int round;
     int id;
     Vec2 pos;
     int hp;
@@ -97,6 +98,7 @@ struct PlayerSight
 
     int bombCount, wardCount;
     bool canBuyBomb, canBuyWard;
+    bool canUseBomb, canUseWard;
     bool canSuckAttack;
 
     int gold, score;

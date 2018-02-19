@@ -121,6 +121,7 @@ PlayerSight GameLogic::getSight(int pid)
     PlayerIDManager& mgr = playerIDMgr[pid];
     float currentSight = getCurrentDayPeriod() == Day ? DaySight : NightSight;
 
+    res.round = getCurrentRound();
     res.id = pid;
     res.hp = pl.hp;
     res.pos = pl.position;
@@ -134,6 +135,8 @@ PlayerSight GameLogic::getSight(int pid)
     res.wardCount = pl.wardCount;
     res.canBuyBomb = pl.canBuyBomb();
     res.canBuyWard = pl.canBuyWard();
+    res.canUseBomb = pl.canUseBomb();
+    res.canUseWard = pl.canUseWard();
     res.canSuckAttack = pl.canSuckAttack();
 
     //更新PlayerIDManager
@@ -525,7 +528,7 @@ void GameLogic::calcRound()
                 continue;
             if (act.second.target_id == 0)          //炸弹
             {
-                if (unit.canUseBomb())
+                if (unit.hasBomb() && unit.canUseBomb())
                 {
                     unit.useBomb();
                     mapInfo.throwBomb(this, id, unit.position, act.second.pos);
@@ -533,7 +536,7 @@ void GameLogic::calcRound()
             }
             else                                    //守卫
             {
-                if (unit.canUseWard() && (act.second.pos - unit.position).length() <= WardPlaceRadius)
+                if (unit.hasWard() && unit.canUseWard() && (act.second.pos - unit.position).length() <= WardPlaceRadius)
                 {
                     unit.useWard();
                     mapInfo.placeWard(this, id, act.second.pos);

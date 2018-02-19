@@ -11,7 +11,7 @@ using namespace std;
 
 void EscapeStrategy::generateActions(const PlayerSight &sight, Actions *actions)
 {
-    Vec2 best;
+    Vec2 best(sight.pos);
     float best_score = 0;
     for (int i = 0; i < tries; ++i)
     {
