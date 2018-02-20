@@ -133,8 +133,6 @@ PlayerSight GameLogic::getSight(int pid)
 
     res.bombCount = pl.bombCount;
     res.wardCount = pl.wardCount;
-    res.canBuyBomb = pl.canBuyBomb();
-    res.canBuyWard = pl.canBuyWard();
     res.canUseBomb = pl.canUseBomb();
     res.canUseWard = pl.canUseWard();
     res.canSuckAttack = pl.canSuckAttack();

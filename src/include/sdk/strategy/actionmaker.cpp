@@ -8,8 +8,7 @@ using namespace std;
 
 ActionMaker::~ActionMaker()
 {
-    for (auto it = strategies.begin(); it != strategies.end(); ++it)
-        delete it->second;
+    removeAll();
 }
 
 template <typename Tp, typename... Types>
@@ -40,12 +39,18 @@ void ActionMaker::removeStrategies(StrategyType type)
         else
             ++it;
 }
-
-void ActionMaker::make()
+void ActionMaker::removeAll()
 {
-    if (sight == nullptr || actions == nullptr)
+    for (auto it = strategies.begin(); it != strategies.end(); ++it)
+        delete it->second;
+    strategies.clear();
+}
+
+void ActionMaker::make(const PlayerSight &sight, Actions *actions)
+{
+    if (actions == nullptr)
         return;
     for (auto it = strategies.begin(); it != strategies.end(); ++it)
         if (it->second != nullptr)
-            it->second->generateActions(*sight, actions);
+            it->second->generateActions(sight, actions);
 }

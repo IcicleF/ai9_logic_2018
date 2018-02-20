@@ -8,6 +8,7 @@
 #include "actions.h"
 #include "randomizer.h"
 #include "router.h"
+#include "strategy/actionmaker.h"
 
 namespace SDK
 {
@@ -34,6 +35,12 @@ namespace SDK
      * @return 起点走到终点的最短距离，通过调用routeTo计算；若routeTo判断不可抵达，该值为FINF
      */
     float distanceTo(Vec2 start, Vec2 end);
+
+    /**
+     * actionMaker: 获得一个静态的ActionMaker单例。
+     * @return 指向该ActionMaker实例的指针。
+     */
+    ActionMaker* actionMaker();
 }
 
 #endif //SDK_H

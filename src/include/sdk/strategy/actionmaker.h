@@ -14,20 +14,18 @@
 class ActionMaker
 {
 public:
-    explicit ActionMaker(PlayerSight* _sight = nullptr, Actions* _actions = nullptr)
-            : sight(_sight), actions(_actions) { }
+    explicit ActionMaker() { }
     ~ActionMaker();
 
     template <typename Tp, typename... Types>
     void addStrategy(std::string, Types...);
     void removeStrategy(std::string);
     void removeStrategies(StrategyType);
+    void removeAll();
 
-    void make();
+    void make(const PlayerSight&, Actions*);
 
 private:
-    Actions* actions;
-    PlayerSight* sight;
     std::map<std::string, Strategy*> strategies;
 };
 

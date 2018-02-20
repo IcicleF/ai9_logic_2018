@@ -97,7 +97,6 @@ struct PlayerSight
     Vec2 velocity;
 
     int bombCount, wardCount;
-    bool canBuyBomb, canBuyWard;
     bool canUseBomb, canUseWard;
     bool canSuckAttack;
 
