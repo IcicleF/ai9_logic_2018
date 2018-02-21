@@ -11,3 +11,11 @@ void Actions::emplace(ActionType type, int target_id, Vec2 pos)
     act.pos = pos;
     actions.push_back(act);
 }
+void Actions::emplace(ActionType type, int target_id)
+{
+	this->emplace(type, target_id, Vec2());
+}
+void Actions::emplace(ActionType type, Vec2 pos)
+{
+	this->emplace(type, -1, pos);
+}

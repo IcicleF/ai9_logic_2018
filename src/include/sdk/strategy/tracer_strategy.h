@@ -10,7 +10,7 @@
 class TracerStrategy : public Strategy
 {
 public:
-    TracerStrategy(int _target, float _distance = 0.0) :
+    TracerStrategy(int _target, float _distance = 5.0) :
             Strategy(), target(_target), distance(_distance) { }
     virtual ~TracerStrategy() = default;
 

@@ -47,6 +47,9 @@ enum LogicStatus
     LogicStatusCount
 };
 
+const int BombItem = 0;
+const int WardItem = 1;
+
 struct Action
 {
     ActionType actionType;

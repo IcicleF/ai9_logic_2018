@@ -23,7 +23,7 @@ public:
     virtual ~Strategy() = default;
 
     virtual void generateActions(const PlayerSight&, Actions*) = 0;
-    virtual StrategyType getStrategyType() = 0;
+    virtual StrategyType getStrategyType() { return Neutral; }
 
 protected:
     unsigned int magic;

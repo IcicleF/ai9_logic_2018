@@ -51,7 +51,8 @@ void GameLogic::reportActions(int pid, const Actions& _actions)
         return;
     actionReceived.insert(pid);
     for (const Action& act : _actions.actions)
-        this->actions.push_back(make_pair(pid, act));
+		if (act.actionType != NoAction && action.actionType != ContinueMovement)
+			this->actions.push_back(make_pair(pid, act));
 }
 vector<int> GameLogic::getIDs()
 {
@@ -561,6 +562,8 @@ void GameLogic::calcRound()
             continue;
         if (type == SelectDestination || type == ContinueMovement)
         {
+			if (type == ContinueMovement && unit.currentTarget == -1)
+				continue;
             unit.moved = true;
             if (type == SelectDestination)
             {

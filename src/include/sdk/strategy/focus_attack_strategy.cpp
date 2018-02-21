@@ -16,8 +16,8 @@ void FocusAttackStrategy::generateActions(const PlayerSight &sight, Actions *act
             if (sight.canUseBomb)
             {
                 if (sight.bombCount == 0)
-                    actions->emplace(BuyItem, 0, Vec2());
-                actions->emplace(UseItem, 0, uinfo.pos + uinfo.velocity);   //预测一回合行动
+                    actions->emplace(BuyItem, BombItem, Vec2());
+                actions->emplace(UseItem, BombItem, uinfo.pos + uinfo.velocity);   //预测一回合行动
             }
         }
 }

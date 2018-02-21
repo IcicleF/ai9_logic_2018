@@ -50,7 +50,7 @@ __declspec(dllexport) void playerAI(const PlayerSight sight, Actions* actions);
 
 PlayerSight 的定义位于 `sdk/defs.h`。它不包含成员函数，仅仅是封装了一些成员变量。各成员变量及它们的含义如下：
 
-| 变量名称 | 类型 | 意义  |
+| 变量名称 | 类型 | 含义  |
 |--|--|--|
 | round | `int` | 当前的回合数，从 1 开始递增 |
 | id | `int` | 玩家被分配到的 ID |
@@ -81,3 +81,97 @@ PlayerSight 的定义位于 `sdk/defs.h`。它不包含成员函数，仅仅是�
 
 Actions 的定义位于 `sdk/actions.h`。它仅仅封装了一个 `std::vector<Action>` 变量，同时提供 `emplace` 函数用以方便您向其中添加动作。
 
+`emplace` 函数的原型如下：
+
+```cpp
+void emplace(ActionType type, int target_id, Vec2 pos)
+void emplace(ActionType type, int target_id);
+void emplace(ActionType type, Vec2 pos);
+```
+
+`ActionType` 是一个枚举类型，代表了动作的类型，可取值如下：
+
+| 取值 | 含义 | 必须指定的参数 |
+|--|--|--|
+| NoAction | **仅作为内部取值而使用**：无意义的空动作 | - |
+| SelectDestination | 选择一个目标地点，并按照寻路系统给出的最短路开始向该点移动 | pos |
+| ContinueMovement | **仅作为内部取值而使用**：指示逻辑按照上一个 SelectDestination 决定的路线继续移动 | - |
+| BuyItem | 购买道具 | target_id |
+| UseItem | 使用道具 | target_id, pos |
+| SuckAttack | 普通攻击 | target_id |
+
+NoAction 和 ContinueMovement 仅作为逻辑内部的取值而被使用，如果您向逻辑报告了 NoAction 或 ContinueMovement 动作，它们将被直接忽略。
+
+## 使用 SDK
+
+我们提供一个轻量的 SDK 供您使用，使用 SDK 可以在一定程度上简化您的编程；对于刚接触本游戏的初学者而言，您还可以借助 SDK 加深对游戏机制和核心玩法的了解。
+
+要使用 SDK 只需包含 `sdk/sdk.h`。SDK 的全部内容包含在命名空间 `SDK` 中。
+
+### SDK 函数
+
+我们一共只提供 3 个功能性的函数：
+
+```cpp
+bool reachable(Vec2 x);
+std::vector<Vec2> routeTo(Vec2 start, Vec2 end);
+float distanceTo(Vec2 start, Vec2 end);
+```
+
+这三个函数是对 `sdk/router.h` 中 `Router` 类接口的再封装。 `Router` 类应用了单例模式，与直接调用 `Router` 类的接口相比，使用 SDK 封装好的函数能降低您代码的复杂程度。
+
+三个函数的意义分别如下：
+
+| 函数名 | 含义 |
+|--|--|
+| reachable | 判定 x 点是或不是一个合法位置（关于合法位置的定义，请参阅：逻辑参考文档） |
+| routeTo | 给出从 start 到 end 的一条最短路径。<br />返回值是一个点列，表示从 start 移动到 end，应当先由 start 处移动到点列的第 1 点处，然后由点列的第 1 点处移动到点列的第 2 点处……，最后移动到点列的最后一点处，该点必定为 end。上述每次移动均为直线移动，中间没有障碍。<br />如果 start 或 end 是非法位置，那么返回值为一个空 vector。 |
+| distanceTo | 根据 routeTo 给出的最短路线，计算从 start 到 end 的路程。<br />如果 start 或 end 非法，那么返回 FINF（定义在 `sdk/literals.h`）。 |
+
+### 预定义策略
+
+`SDK` 命名空间中包含的第四个函数允许您使用预定义的策略，方便您了解游戏的核心玩法。该函数的原型如下：
+
+```cpp
+ActionMaker* actionMaker();
+```
+
+actionMaker 函数保存一个静态的 ActionMaker 局部变量，并且返回指向它的指针；通过这种方式，我们为您封装好了一个 ActionMaker 类的单例。
+
+您可以利用该单例调用预定义策略。预定义策略是我们为您提供的一些简单的游戏策略，您可以选取其中一些并应用它们；对于初学者而言，您可以尝试各种不同的组合；对于已经熟悉游戏的选手，您可以利用这些策略，某种程度上减低您的代码量。
+
+所有的预定义策略都分别以类的形式实现，这些类全部公有继承于基类 Strategy（定义于 `sdk/strategy/strategy.h`）。ActionMaker 提供了一个接口供您向其中添加策略，它的原型如下：
+
+```cpp
+template <typename Tp, typename... Types>
+void addStrategy(std::string name, Types... args);
+```
+
+其中 name 是策略的名称，该名称由您来指定。您指定的各个名称应当互不重复，相同名称的策略会发生覆盖。如果您到时希望移除某个策略，您需要指定被移除策略的名称。
+
+addStrategy 是一个可变参数模板函数，它的可变参数部分是为了构造预定义策略类，因为某些预定义策略需要给定构造参数才能正常工作。该函数的使用方式就像下面这样：
+
+```cpp
+SDK::actionMaker()->addStrategy<StealthStrategy>(30);
+```
+
+上述代码中，类 StealthStrategy 是我们提供的预定义策略之一，其定义位于 `sdk/strategy/stealth_strategy.h`（该目录下每个以 `_strategy.h` 结尾的头文件中都包含了一个预定义策略）。`30` 则是 StealthStrategy 的构造函数参数。关于各个预定义策略的具体内容和构造参数，请参阅下表：
+
+| 预定义策略类 | 构造参数 | 策略内容 |
+|--|--|--|
+| EscapeStrategy | tries（整型，可选） | 每回合随机选取 tries 个方向，并且向离视野内单位最远的那个方向移动 |
+| FocusAttackStrategy | id（整型，必须） | 使用普通攻击和炸弹尽可能攻击编号为 id 的单位 |
+| PatrolStrategy | 无 | 持续按逆时针方向环绕正方形场地，每次在抵达正方形的一个角之后随机暂停一段时间 |
+| RandomizedAttackerStrategy | 无 | 持续对身边的随机单位使用普通攻击，每个编号最多攻击一次 |
+| StealthStrategy | hp_lower_bound（整型，默认为 20） | 在 HP 高于 hp_lower_bound 时模拟村民运动；否则，如果有单位在普通攻击范围内，则攻击离自身最远的，并向他当回合速度的反方向逃离；如果没有，则朝视野内离自己最近的单位运动 |
+| TracerStrategy | id（整型，必须）、distance（浮点型，默认为 5.0） | 跟踪编号为 id 的单位，保持距离不小于 distance |
+
+为了应用您添加好的策略，您只需在 `playerAI` 函数中调用：
+
+```cpp
+SDK::actionMaker()->make(sight, actions);
+```
+
+ActionMaker 就会自动应用这些策略并向 actions 中添加对应的动作。
+
+您也可以自行继承 Strategy 类并实现您自己的策略。您可以阅读 `sdk/strategy/strategy.h` 了解您需要实现的函数。
