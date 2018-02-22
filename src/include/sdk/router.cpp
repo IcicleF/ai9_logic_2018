@@ -23,6 +23,8 @@ Router::Router()
 }
 bool Router::Reachable(Vec2 pos)
 {
+    if (abs(pos.x) > MapSize || abs(pos.y) > MapSize)
+        return false;
     for (int i = 0; i < ObstacleCount; ++i)
         if (pos.x >= Obstacles[i][0].x - ObsBorder
             && pos.x <= Obstacles[i][2].x + ObsBorder
@@ -53,7 +55,7 @@ std::vector<Vec2> Router::Route(Vec2 start, Vec2 end)
 
     float dis[MAX_POINTS];					//起点到该点的最短距离
 	float edges[MAX_POINTS][MAX_POINTS];    //边权
-	Vec2 vertex[MAX_POINTS];			        //参与最短路计算的点的坐标
+	Vec2 vertex[MAX_POINTS];			    //参与最短路计算的点的坐标
 	int prev[MAX_POINTS];					//点的前驱，回溯最短路用
 	bool used[MAX_POINTS];                  //点是否已松弛过
 

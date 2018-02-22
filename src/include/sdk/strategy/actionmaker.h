@@ -18,7 +18,19 @@ public:
     ~ActionMaker();
 
     template <typename Tp, typename... Types>
-    void addStrategy(std::string, Types...);
+    void addStrategy(std::string name, Types... args)
+	{
+		Tp* tp = new Tp(args...);
+		Strategy* s = reinterpret_cast<Strategy*>(tp);
+		if (s->magic != MAGIC)
+		{
+			delete tp;
+			return;
+		}
+		removeStrategy(name);
+		strategies[name] = s;
+	}
+	
     void removeStrategy(std::string);
     void removeStrategies(StrategyType);
     void removeAll();

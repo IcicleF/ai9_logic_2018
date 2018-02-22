@@ -1,7 +1,6 @@
 #include <chrono>
 #include <set>
 #include <algorithm>
-#include <cstring>
 
 #include "logic.h"
 #include "json/json.h"
@@ -47,12 +46,9 @@ void GameLogic::startGame(int _playerCount)         //初始化游戏，设置�
 
 void GameLogic::reportActions(int pid, const Actions& _actions)
 {
-    if (actionReceived.find(pid) != actionReceived.end())
-        return;
-    actionReceived.insert(pid);
     for (const Action& act : _actions.actions)
-		if (act.actionType != NoAction && action.actionType != ContinueMovement)
-			this->actions.push_back(make_pair(pid, act));
+		if (act.actionType != NoAction && act.actionType != ContinueMovement)
+			actions.push_back(make_pair(pid, act));
 }
 vector<int> GameLogic::getIDs()
 {
@@ -304,7 +300,6 @@ int GameLogic::judgeWin(bool forced)
 //新回合刷新
 void GameLogic::refresh()
 {
-    clearRoundRecord();
     ++round;
     for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
         it->second->refresh();
@@ -343,6 +338,7 @@ void GameLogic::calcRound()
             {
                 Player *pptr = dynamic_cast<Player*>(it->second);
                 pptr->gold += Salary;
+                addCommand(GoldChange, pptr->id, Salary);
             }
 
     //计算已经扔出的炸弹的爆炸
@@ -525,20 +521,23 @@ void GameLogic::calcRound()
             Unit &unit = *unitInfo[id];
             if (unit.getUnitType() != PlayerType || unit.hp == 0 || unit.hp <= damages[unit.id])
                 continue;
-            if (act.second.target_id == 0)          //炸弹
+            Vec2 pos = act.second.pos;
+            if (abs(pos.x) > MapSize || abs(pos.y) > MapSize)
+                continue;
+            if (act.second.target_id == BombItem)    //炸弹
             {
                 if (unit.hasBomb() && unit.canUseBomb())
                 {
                     unit.useBomb();
-                    mapInfo.throwBomb(this, id, unit.position, act.second.pos);
+                    mapInfo.throwBomb(this, id, unit.position, pos);
                 }
             }
             else                                    //守卫
             {
-                if (unit.hasWard() && unit.canUseWard() && (act.second.pos - unit.position).length() <= WardPlaceRadius)
+                if (unit.hasWard() && unit.canUseWard() && (pos - unit.position).length() <= WardPlaceRadius)
                 {
                     unit.useWard();
-                    mapInfo.placeWard(this, id, act.second.pos);
+                    mapInfo.placeWard(this, id, pos);
                 }
             }
         }
@@ -549,7 +548,7 @@ void GameLogic::calcRound()
     {
         Unit& unit = *(it->second);
         unit.moved = false;
-        if (unit.hp > 0 && unit.getUnitType() == PlayerType && unit.currentTarget != -1 && unit.currentTarget < unit.targets.size())
+        if (unit.hp > 0 && unit.currentTarget != -1 && unit.currentTarget < unit.targets.size())
             actions.push_back(make_pair(it->first, Action(ContinueMovement)));
     }
     for (auto act : actions)

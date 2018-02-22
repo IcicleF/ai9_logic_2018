@@ -152,8 +152,10 @@ void addStrategy(std::string name, Types... args);
 addStrategy 是一个可变参数模板函数，它的可变参数部分是为了构造预定义策略类，因为某些预定义策略需要给定构造参数才能正常工作。该函数的使用方式就像下面这样：
 
 ```cpp
-SDK::actionMaker()->addStrategy<StealthStrategy>(30);
+SDK::actionMaker()->addStrategy<StealthStrategy>("sample_name", 30);
 ```
+
+也就是说，通过模板参数的方式指定您选择的策略，通过函数形参指定名称，以及策略所需的构造函数参数。
 
 上述代码中，类 StealthStrategy 是我们提供的预定义策略之一，其定义位于 `sdk/strategy/stealth_strategy.h`（该目录下每个以 `_strategy.h` 结尾的头文件中都包含了一个预定义策略）。`30` 则是 StealthStrategy 的构造函数参数。关于各个预定义策略的具体内容和构造参数，请参阅下表：
 
@@ -164,7 +166,7 @@ SDK::actionMaker()->addStrategy<StealthStrategy>(30);
 | PatrolStrategy | 无 | 持续按逆时针方向环绕正方形场地，每次在抵达正方形的一个角之后随机暂停一段时间 |
 | RandomizedAttackerStrategy | 无 | 持续对身边的随机单位使用普通攻击，每个编号最多攻击一次 |
 | StealthStrategy | hp_lower_bound（整型，默认为 20） | 在 HP 高于 hp_lower_bound 时模拟村民运动；否则，如果有单位在普通攻击范围内，则攻击离自身最远的，并向他当回合速度的反方向逃离；如果没有，则朝视野内离自己最近的单位运动 |
-| TracerStrategy | id（整型，必须）、distance（浮点型，默认为 5.0） | 跟踪编号为 id 的单位，保持距离不小于 distance |
+| TracerStrategy | id（整型，必须）、distance（浮点型，默认为 5.0） | 跟踪编号为 id 的单位，保持距离不小于 distance<br />如果该单位从视野中消失，立刻原地停止 |
 
 为了应用您添加好的策略，您只需在 `playerAI` 函数中调用：
 
@@ -174,4 +176,18 @@ SDK::actionMaker()->make(sight, actions);
 
 ActionMaker 就会自动应用这些策略并向 actions 中添加对应的动作。
 
-您也可以自行继承 Strategy 类并实现您自己的策略。您可以阅读 `sdk/strategy/strategy.h` 了解您需要实现的函数。
+* 需要注意的是，策略在添加后始终有效，直到它被移除。您不需要每回合都重复添加同样的策略。
+
+您也可以自行继承 Strategy 类并实现您自己的策略：首先您需要包含 `sdk/strategy/strategy.h` 并继承纯虚类 Strategy，在继承类中实现策略函数：
+
+```cpp
+virtual void generateActions(const PlayerSight &sight, Actions *actions);
+```
+
+此外，您还可以重写 getStrategyType 函数为您的策略指定一种类型（Defensive、Neutral 或 Offensive）。ActionMaker 支持按类型批量地移除策略。
+
+## 总结
+
+通过以上的说明，您应该已经对 AI 的编写方式和 SDK 的使用有了一个大致的了解。
+
+感谢您的阅读，祝您参赛愉快。

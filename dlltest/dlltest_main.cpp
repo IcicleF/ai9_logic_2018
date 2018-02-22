@@ -13,9 +13,9 @@ using namespace std;
 using namespace chrono;
 
 #if defined(_MSC_VER)
-const char dllpath[] = "../ai/Debug/emptyAI.dll";
+const char dllpath[] = "../ai/Debug/routerSpeedAI.dll";
 #else
-const char dllpath[] = "ai/libemptyAI.dll";
+const char dllpath[] = "ai/librouterSpeedAI.dll";
 #endif
 
 int main(int argc, char** argv)
@@ -35,7 +35,7 @@ int main(int argc, char** argv)
             return 0;
         }
 
-    cout << "[dlltest_main] libemptyAI.dll loaded!" << endl;
+    cout << "[dlltest_main] " << dllpath << " loaded!" << endl;
 
     auto stime = system_clock::now();
 

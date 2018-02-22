@@ -39,3 +39,8 @@ CMakeCache.txt
 *.exe
 *.dll
 *.a
+
+# Files Used for Debugging
+
+output.txt
+log.txt

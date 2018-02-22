@@ -6,17 +6,15 @@
 
 using namespace std;
 
-bool reachable(Vec2 x)
+bool SDK::reachable(Vec2 x)
 {
     return Router::getInstance()->Reachable(x);
 }
-
-vector<Vec2> routeTo(Vec2 start, Vec2 end)
+vector<Vec2> SDK::routeTo(Vec2 start, Vec2 end)
 {
     return Router::getInstance()->Route(start, end);
 }
-
-float distanceTo(Vec2 start, Vec2 end)
+float SDK::distanceTo(Vec2 start, Vec2 end)
 {
     auto path = routeTo(start, end);
     if (path.empty())
@@ -27,7 +25,10 @@ float distanceTo(Vec2 start, Vec2 end)
     return res;
 }
 
-ActionMaker* actionMaker()
+float SDK::randAxis() { return Randomizer::getInstance()->randAxis(); }
+Vec2 SDK::randPosition() { return Randomizer::getInstance()->randPosition(); }
+
+ActionMaker* SDK::actionMaker()
 {
     static ActionMaker maker;
     return &maker;

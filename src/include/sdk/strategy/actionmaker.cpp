@@ -11,20 +11,6 @@ ActionMaker::~ActionMaker()
     removeAll();
 }
 
-template <typename Tp, typename... Types>
-void ActionMaker::addStrategy(string name, Types... args)
-{
-    Tp* tp = new Tp(args...);
-    Strategy* s = reinterpret_cast<Strategy*>(tp);
-    if (s->magic != MAGIC)
-    {
-        delete tp;
-        return;
-    }
-    removeStrategy(name);
-    strategies[name] = s;
-}
-
 void ActionMaker::removeStrategy(string name)
 {
     auto it = strategies.find(name);

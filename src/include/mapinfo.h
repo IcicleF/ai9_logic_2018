@@ -14,6 +14,9 @@ class MapInfo
 public:
     MapInfo() = default;
     ~MapInfo() = default;
+
+    bool inRange(Vec2);
+
     std::vector<std::pair<int, Vec2> > calcCommands(GameLogic *caller);
     void placeWard(GameLogic *caller, int pid, Vec2 pos);
     void throwBomb(GameLogic *caller, int pid, Vec2 start, Vec2 end);

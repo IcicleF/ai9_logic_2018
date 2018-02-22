@@ -32,12 +32,15 @@ void Unit::getAction()
         waitUntil = IINF;
         act.emplace(SelectDestination, -1, Router::getInstance()->availablePosition());
     }
-    else if (currentTarget >= 0 && currentTarget < targets.size())
-        act.emplace(ContinueMovement, -1, Vec2());
-    else if (currentTarget == targets.size())
-    {
-        currentTarget = -1;         //进入等待
+    else if (currentTarget == -1)
         waitUntil = logic->getCurrentRound() + Randomizer::getInstance()->randWaitTime();
-    }
     logic->reportActions(this->id, act);
+}
+
+void Player::receiveDeathPunishment()
+{
+    bombCD = wardCD = suckAttackCD = 0;
+    int gold_n = int(gold * DeathPunishment);
+    logic->addCommand(GoldChange, id, gold_n - gold);
+    gold = gold_n;
 }

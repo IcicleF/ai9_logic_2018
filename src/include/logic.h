@@ -20,7 +20,6 @@
 
 class GameLogic
 {
-    friend class MapInfo;
 public:
     GameLogic() { logicStat = NotInitialized; }
     ~GameLogic() = default;
@@ -43,30 +42,13 @@ public:
     {
         if (logicStat != DistributingCommands)
             return;
+        clearRoundRecord();
         logicStat = WaitingPlayerActions;
+
     }
     void reportActions(int pid, const Actions& _actions);
     void calcRound();
     int judgeWin(bool forced = false);
-    std::string getCommands();
-
-    IDManager idManager;
-    MapInfo mapInfo;
-
-private:
-    LogicStatus logicStat;
-    int round;
-
-    int playerCount;
-    std::vector<int> playerID;
-    std::map<int, Unit*> unitInfo;
-    std::map<int, PlayerIDManager> playerIDMgr;
-
-    std::set<int> actionReceived;
-
-    std::vector<std::pair<int, Action> > actions;
-    std::vector<Command> commands;
-    std::string jsoncmd;
 
     void addCommand(CommandType type, int id, Vec2 pos = Vec2())
     {
@@ -84,11 +66,29 @@ private:
         cmd.pos = pos;
         commands.push_back(cmd);
     }
+    std::string getCommands();
+
+    IDManager idManager;
+    MapInfo mapInfo;
+
+private:
+    LogicStatus logicStat;
+    int round;
+
+    int playerCount;
+    std::vector<int> playerID;
+    std::map<int, Unit*> unitInfo;
+    std::map<int, PlayerIDManager> playerIDMgr;
+
+    std::vector<std::pair<int, Action> > actions;
+    std::vector<Command> commands;
+    std::string jsoncmd;
+
     void translateCommands();
     void refresh();
     void clearRoundRecord()
     {
-        actionReceived.clear();
+        std::cout << this->round << std::endl;
         actions.clear();
         commands.clear();
     }

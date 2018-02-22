@@ -64,11 +64,7 @@ struct Player : public Unit
         continuousKill(0), killedEnemy(0), killedVillager(0) { }
     virtual UnitType getUnitType() { return PlayerType; }
 
-    virtual void receiveDeathPunishment()
-    {
-        bombCD = wardCD = suckAttackCD = 0;
-        gold = int(gold * DeathPunishment);
-    }
+    virtual void receiveDeathPunishment();
     virtual void clearContinuousKill() { continuousKill = 0; }
     virtual bool canUseBomb() { return hp > 0 && bombCD == 0; }
     virtual bool canUseWard() { return hp > 0 && wardCD == 0; }

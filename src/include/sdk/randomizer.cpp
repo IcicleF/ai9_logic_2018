@@ -17,7 +17,7 @@ Randomizer::Randomizer()
     auto seed = chrono::system_clock::now().time_since_epoch().count();
     RndCore = new mt19937(seed);
     AxisRnd = new uniform_real_distribution<float>(-MapSize, MapSize);
-    RespawnRnd = new uniform_real_distribution<float>(-1, 49);
+    RespawnRnd = new uniform_real_distribution<float>(-1, 39);
     WanderRnd = new uniform_int_distribution<int>(WanderIntervalLB, WanderIntervalUB);
 }
 Randomizer::~Randomizer()

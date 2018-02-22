@@ -29,12 +29,24 @@ namespace SDK
     std::vector<Vec2> routeTo(Vec2 start, Vec2 end);
 
     /**
-     * distanceTo: 计算沿最短路径从起点走到终点，要走的距离。
+     * distanceTo: 计算沿最短路径从起点走到终点要走的距离。
      * @param start 起点坐标
      * @param end 终点坐标
      * @return 起点走到终点的最短距离，通过调用routeTo计算；若routeTo判断不可抵达，该值为FINF
      */
     float distanceTo(Vec2 start, Vec2 end);
+
+    /**
+     * randAxis: 返回一个均匀分布在[-MapSize, MapSize)范围内的随机实数。
+     * @return 随机实数
+     */
+    float randAxis();
+
+    /**
+     * randPos: 返回一个均匀分布在[-MapSize, MapSize) * [-MapSize, MapSize)范围内的随机坐标。
+     * @return 随机坐标
+     */
+    Vec2 randPosition();
 
     /**
      * actionMaker: 获得一个静态的ActionMaker单例。

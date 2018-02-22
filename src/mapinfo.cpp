@@ -3,6 +3,10 @@
 
 using namespace std;
 
+bool MapInfo::inRange(Vec2 p)
+{
+    return p.x >= -MapSize && p.x <= MapSize && p.y >= -MapSize && p.y <= MapSize;
+}
 vector<pair<int, Vec2> > MapInfo::calcCommands(GameLogic *caller)
 {
     //清除所有到期的守卫
