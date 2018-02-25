@@ -18,9 +18,9 @@ public:
     bool inRange(Vec2);
 
     std::vector<std::pair<int, Vec2> > calcCommands(GameLogic *caller);
-    void placeWard(GameLogic *caller, int pid, Vec2 pos);
-    void throwBomb(GameLogic *caller, int pid, Vec2 start, Vec2 end);
-    void unitDied(GameLogic *caller, Vec2 pos);
+    int placeWard(GameLogic *caller, int pid, Vec2 pos);
+    int throwBomb(GameLogic *caller, int pid, Vec2 start, Vec2 end);
+    void unitDied(GameLogic *caller, int id, Vec2 pos);
 
     std::vector<PWardInfo> getWards(int pid);
     std::vector<PBombInfo> getBombs();

@@ -64,7 +64,6 @@ string GameLogic::getCommandTypeName(CommandType t)
     DECLARE_MAPPING(t, BombExplode)
     DECLARE_MAPPING(t, WardPlaced)
     DECLARE_MAPPING(t, WardExpired)
-    DECLARE_MAPPING(t, CorpseAppear)
     DECLARE_MAPPING(t, CorpseExpired)
     DECLARE_MAPPING(t, BombNumberChange)
     DECLARE_MAPPING(t, WardNumberChange)
@@ -73,6 +72,8 @@ string GameLogic::getCommandTypeName(CommandType t)
     DECLARE_MAPPING(t, ScoreChange)
     DECLARE_MAPPING(t, UnitDie)
     DECLARE_MAPPING(t, UnitSpawn)
+    DECLARE_MAPPING(t, DayNightSwitch)
+	DECLARE_MAPPING(t, NightDaySwitch)
     DECLARE_MAPPING(t, GameSet)
 #undef DECLARE_MAPPING
     return "NoCommand";
@@ -83,12 +84,19 @@ void GameLogic::translateCommands()
     for (auto cmd : commands)
     {
         Json::Value jcmd;
-        jcmd["s"] = getCurrentRound();
-        jcmd["t"] = getCommandTypeName(cmd.commandType);
+        jcmd["tim"] = getCurrentRound();
+        jcmd["typ"] = getCommandTypeName(cmd.commandType);
         jcmd["id"] = cmd.unit_id;
         jcmd["x"] = toJStr(cmd.pos.x);
         jcmd["y"] = toJStr(cmd.pos.y);
         jcmd["d"] = cmd.delta;
+        if (cmd.commandType == BombThrown || cmd.commandType == WardPlaced || cmd.commandType == UnitDie)
+            jcmd["tar"] = cmd.target_id;
+        if (cmd.commandType == BombThrown)
+        {
+            jcmd["dx"] = toJStr(cmd.direction.x);
+            jcmd["dy"] = toJStr(cmd.direction.y);
+        }
         root.append(jcmd);
     }
     Json::FastWriter writer;
@@ -105,6 +113,8 @@ string GameLogic::getCommands()
  */
 PlayerSight GameLogic::getSight(int pid)
 {
+    cout << "[logic] getSight start" << endl;
+
     PlayerSight res;
     if (unitInfo.find(pid) == unitInfo.end())
         return res;
@@ -234,6 +244,8 @@ PlayerSight GameLogic::getSight(int pid)
     sort(res.scoreBoard.begin(), res.scoreBoard.end());
     reverse(res.scoreBoard.begin(), res.scoreBoard.end());
 
+    cout << "[logic] sight" << endl;
+
     return res;
 }
 
@@ -308,28 +320,28 @@ void GameLogic::refresh()
 /*
  *  回合的计算顺序：
  *  0. 向村民单位索取当前回合的行动；
- *  1. 计算已经存在于地图上的炸弹的爆炸，以及守卫的消失；
- *  2. 如果是白天，则活着的玩家计算灼烧伤害；
- *  3. 计算普通攻击的伤害和吸血；（上面所有伤害是一起结算的）
- *  4. 结算玩家的死亡惩罚和击杀奖励（先惩罚再奖励）；
- *  5. 计算扔出炸弹和放置守卫，如果前面死亡则无效；
- *  6. 计算玩家移动，如果前面死亡则无效；
- *  7. 死亡惩罚结束的角色重生；
- *  8. 村民随机重生；
- *  9. 计算道具购买。
+ *  1. 发放工资；
+ *  ***** 获取视野 *****
+ *  2. 计算已经存在于地图上的炸弹的爆炸，以及守卫的消失；
+ *  3. 如果是白天，则活着的玩家计算灼烧伤害；
+ *  4. 计算普通攻击的伤害和吸血；（上面所有伤害是一起结算的）
+ *  5. 结算玩家的死亡惩罚和击杀奖励（先惩罚再奖励）；
+ *  6. 计算扔出炸弹和放置守卫，如果前面死亡则无效；
+ *  7. 计算玩家移动，如果前面死亡则无效；
+ *  8. 死亡惩罚结束的角色重生；
+ *  9. 村民随机重生；
+ *  10. 计算道具购买。
  */
-void GameLogic::calcRound()
+void GameLogic::preCalc()
 {
-    logicStat = CalculatingRound;
     this->refresh();
-
-    map<int, int> damages;
-    map<int, set<int> > damageGiver;
 
     //获取村民的移动
     for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
         if (it->second->getUnitType() == VillagerType)
             it->second->getAction();
+
+    cout << "[logic] unit mov" << endl;
 
     //发放工资
     if (getCurrentRound() % SalaryPeriod == 0)
@@ -341,19 +353,35 @@ void GameLogic::calcRound()
                 addCommand(GoldChange, pptr->id, Salary);
             }
 
+    cout << "[logic] salary" << endl;
+}
+
+void GameLogic::calcRound()
+{
+    logicStat = CalculatingRound;
+
+    map<int, int> damages;
+    map<int, set<int> > damageGiver;
+
+    if (getCurrentRound() % (DayTime + NightTime) == 1 && getCurrentRound() != 1)
+        addCommand(NightDaySwitch, -1);
+	else if (getCurrentRound() % (DayTime + NightTime) == DayTime + 1)
+		addCommand(DayNightSwitch, -1);
+
     //计算已经扔出的炸弹的爆炸
     vector<pair<int, Vec2> > explosions = mapInfo.calcCommands(this);
     for (auto e : explosions)
     {
         for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
-            if (it->second->id != e.first && it->second->hp > 0)
+            if (it->first != e.first && it->second->hp > 0)
                 if ((it->second->position - e.second).length() < BombRadius)
                 {
-                    damages[it->second->id] += BombDamage;
-                    damageGiver[it->second->id].insert(e.first);
+                    damages[it->first] += BombDamage;
+                    damageGiver[it->first].insert(e.first);
                 }
-        addCommand(BombExplode, 0, e.second);
     }
+
+    cout << "[logic] - bomb" << endl;
 
     //计算灼烧伤害
     if (getCurrentDayPeriod() == Day && getCurrentRound() % BurnPeriod == 0)
@@ -364,6 +392,8 @@ void GameLogic::calcRound()
                 continue;
             damages[it->first] += BurnDamage;
         }
+
+    cout << "[logic] - burn" << endl;
 
     //处理普通攻击
     for (auto act : actions)
@@ -397,6 +427,8 @@ void GameLogic::calcRound()
             damageGiver[target_id].insert(id);
         }
 
+    cout << "[logic] damage" << endl;
+
     //计算单位死亡和金钱奖励
     for (auto it = damages.begin(); it != damages.end(); ++it)
     {
@@ -412,9 +444,10 @@ void GameLogic::calcRound()
         }
         else                            //伤害致死；死亡角色的后处理随后进行
         {
+            int corpse_id = idManager.newID();
             addCommand(HPChange, id, -unit.hp);
-			addCommand(UnitDie, id, unit.position);
-            mapInfo.unitDied(this, unit.position);
+			addCommand(UnitDie, id, corpse_id, 0, unit.position, Vec2());
+            mapInfo.unitDied(this, corpse_id, unit.position);
             unit.hp = 0;
         }
     }
@@ -480,6 +513,8 @@ void GameLogic::calcRound()
             ++it;
     }
 
+    cout << "[logic] deaths, punishment & bonus" << endl;
+
     //计算道具的购买
     for (auto act : actions)
         if (act.second.actionType == BuyItem)
@@ -529,7 +564,8 @@ void GameLogic::calcRound()
                 if (unit.hasBomb() && unit.canUseBomb())
                 {
                     unit.useBomb();
-                    mapInfo.throwBomb(this, id, unit.position, pos);
+                    int bomb_id = mapInfo.throwBomb(this, id, unit.position, pos);
+                    addCommand(BombThrown, id, bomb_id, 0, unit.position, pos);
                 }
             }
             else                                    //守卫
@@ -537,11 +573,14 @@ void GameLogic::calcRound()
                 if (unit.hasWard() && unit.canUseWard() && (pos - unit.position).length() <= WardPlaceRadius)
                 {
                     unit.useWard();
-                    mapInfo.placeWard(this, id, pos);
+                    int ward_id = mapInfo.placeWard(this, id, pos);
+                    addCommand(WardPlaced, id, ward_id, 0, unit.position, pos);
                 }
             }
         }
     }
+
+    cout << "[logic] item" << endl;
 
     //计算单位移动
     for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
@@ -617,6 +656,8 @@ void GameLogic::calcRound()
         }
     }
 
+    cout << "[logic] movement" << endl;
+
     //死亡惩罚结束的玩家重生
     for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
         if (it->second->hp == 0 && it->second->respawnWhen == getCurrentRound())
@@ -636,7 +677,11 @@ void GameLogic::calcRound()
         int id = idManager.newID();
         unitInfo[id] = new Unit(this);
         unitInfo[id]->id = id;
+
+        addCommand(UnitSpawn, id, unitInfo[id]->position);
     }
+
+    cout << "[logic] respawn" << endl;
 
     translateCommands();
     logicStat = DistributingCommands;

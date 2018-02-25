@@ -12,6 +12,8 @@
 using namespace std;
 using namespace chrono;
 
+#define NUM 4
+
 #if defined(_MSC_VER)
 const char dllpath[] = "../ai/Debug/routerSpeedAI.dll";
 #else
@@ -21,17 +23,17 @@ const char dllpath[] = "ai/librouterSpeedAI.dll";
 int main(int argc, char** argv)
 {
     setReplayFile("output.txt");
-    init(4);
+    init(NUM);
 
-    int *id = new int[4];
+    int *id = new int[NUM];
     getPlayerIDs(id);
 
     cout << "[dlltest_main] player id fetched." << endl;
 
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < NUM; ++i)
 		if (!loadAI(dllpath, id[i]))
         {
-            cout << "[dlltest_main] failed to load libemptyAI.dll..." << endl;
+            cout << "[dlltest_main] failed to load " << dllpath << "..." << endl;
             return 0;
         }
 
@@ -39,11 +41,14 @@ int main(int argc, char** argv)
 
     auto stime = system_clock::now();
 
-    int rounds = 900;
+    int rounds = 2000;
     for (int i = 0; i < rounds; ++i)
     {
+        cout << "round #" << i << ": start." << endl;
         invokeAI();
+        cout << "round #" << i << ": ai invoked." << endl;
         run();
+        cout << "round #" << i << ": round calced." << endl;
         if (checkWin() != -1)
             break;
     }

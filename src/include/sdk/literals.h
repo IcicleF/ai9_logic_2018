@@ -59,9 +59,9 @@ const float WardPlaceRadius = 7.0;              //守卫的放置半径
 /*
  *  昼夜
  */
-const int DayTime = 300;                        //白昼时间（内部回合数）
+const int DayTime = 100;                        //白昼时间（内部回合数）
 const float DaySight = 30.0;                    //白昼视野
-const int NightTime = 150;                      //夜晚时间（内部回合数）
+const int NightTime = 50;                       //夜晚时间（内部回合数）
 const float NightSight = 10.0;                  //夜晚视野
 
 enum DayPeriod

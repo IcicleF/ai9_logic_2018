@@ -26,6 +26,7 @@ public:
     LogicStatus getLogicStatus() { return logicStat; }
 
     void startGame(int _playerCount);        //初始化游戏，设置玩家人数
+	int getPlayerCount() { return playerCount; }
     std::vector<int> getIDs();
     PlayerSight getSight(int pid);
 
@@ -47,24 +48,17 @@ public:
 
     }
     void reportActions(int pid, const Actions& _actions);
+    void preCalc();
     void calcRound();
     int judgeWin(bool forced = false);
 
     void addCommand(CommandType type, int id, Vec2 pos = Vec2())
     {
-        Command cmd(type);
-        cmd.unit_id = id;
-        cmd.delta = 0;
-        cmd.pos = pos;
-        commands.push_back(cmd);
+        addCommand(type, id, -1, 0, pos, Vec2());
     }
     void addCommand(CommandType type, int id, int delta, Vec2 pos = Vec2())
     {
-        Command cmd(type);
-        cmd.unit_id = id;
-        cmd.delta = delta;
-        cmd.pos = pos;
-        commands.push_back(cmd);
+        addCommand(type, id, -1, delta, pos, Vec2());
     }
     std::string getCommands();
 
@@ -91,6 +85,17 @@ private:
         std::cout << this->round << std::endl;
         actions.clear();
         commands.clear();
+    }
+
+    void addCommand(CommandType type, int unit_id, int target_id, int delta, Vec2 pos, Vec2 direction)
+    {
+        Command cmd(type);
+        cmd.unit_id = unit_id;
+        cmd.target_id = target_id;
+        cmd.delta = delta;
+        cmd.pos = pos;
+        cmd.direction = direction;
+        commands.push_back(cmd);
     }
     std::string getCommandTypeName(CommandType);
 };

@@ -4,6 +4,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <iostream>
 #include "ui/uinterface.h"
 
 using namespace std;
@@ -29,7 +30,7 @@ void UInterface::setReplayFile(const char* rf)
     fout = fopen(rf, "w");
     if (!fout)
         fout = nullptr;
-    fprintf(fout, "[");
+    fprintf(fout, "{\"gameinfo:\"[");
 }
 void UInterface::init(int playerCount)
 {
@@ -70,13 +71,15 @@ bool UInterface::invokeAI()
         if (dlls[i] == nullptr)
             return false;
     logic.startReporting();
+    logic.preCalc();
     for (int i = 0; i < n; ++i)
     {
         Actions acts;
-        bool res = dlls[i]->getCommands(logic.getSight(ids[i]), &acts);
-        if (!res)
-            return false;
+        cout << "start collecting:" << i << endl;
+        dlls[i]->getCommands(logic.getSight(ids[i]), &acts);
+        cout << "reporting:" << i << endl;
         logic.reportActions(ids[i], acts);
+        cout << "collected: " << i << endl;
     }
     return true;
 }
@@ -102,7 +105,7 @@ void UInterface::closeReplayFile()
 {
     if (fout == nullptr)
         return;
-    fprintf(fout, "]\n");
+	fprintf(fout, "],\"participants\":%d,\"rounds\":%d}\n", logic.getPlayerCount(), logic.getCurrentRound());
     fclose(fout);
     fout = nullptr;
 }

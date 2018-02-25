@@ -24,7 +24,6 @@ enum CommandType
     BombExplode,                                //特定玩家的炸弹在特定地点爆炸
     WardPlaced,                                 //特定地点放置了一个守卫
     WardExpired,                                //特定守卫抵达时限而消失
-    CorpseAppear,                               //特定地点出现尸体
     CorpseExpired,                              //特定尸体抵达时限而消失
     BombNumberChange,                           //特定玩家的炸弹数量改变
     WardNumberChange,                           //特定玩家的守卫数量改变
@@ -33,6 +32,8 @@ enum CommandType
     ScoreChange,                                //特定玩家得分改变
     UnitDie,                                    //特定单位死亡
     UnitSpawn,                                  //特定单位在特定地点出生
+    DayNightSwitch,                             //昼夜转换
+	NightDaySwitch,								//夜昼转换
     GameSet,                                    //游戏结束，并且报告特定玩家胜利
     CommandTypeCount
 };
@@ -61,11 +62,11 @@ struct Action
 struct Command
 {
     CommandType commandType;
-    int unit_id;
+    int unit_id, target_id;
     int delta;
-    Vec2 pos;
+    Vec2 pos, direction;
 
-    Command(CommandType _type = NoCommand) : commandType(_type), unit_id(-1), delta(0) { }
+    Command(CommandType _type = NoCommand) : commandType(_type), delta(0) { }
 };
 
 struct PWardInfo
