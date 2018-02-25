@@ -80,10 +80,10 @@ bool DllInterface<Types...>::getCommands(Types... args)
         }
         ret = 1;
     };
-    std::thread* aiThread = new std::thread(run);
     auto terminateTime = system_clock::now() + milliseconds(500);
+	std::thread* aiThread = new std::thread(run);
     while (system_clock::now() < terminateTime && ret == 0);
-    aiThread.detach();
+    aiThread->detach();
 	delete aiThread;
     return true;
 }

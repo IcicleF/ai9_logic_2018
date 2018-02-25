@@ -41,7 +41,7 @@ int main(int argc, char** argv)
 
     auto stime = system_clock::now();
 
-    int rounds = 2000;
+    int rounds = 1000;
     for (int i = 0; i < rounds; ++i)
     {
         cout << "round #" << i << ": start." << endl;
