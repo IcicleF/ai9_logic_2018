@@ -37,6 +37,8 @@ EXPORT void setReplayFile(const char*);
 
 EXPORT void getPlayerIDs(int*);
 
+EXPORT void setPlayerName(int, const char*);
+
 EXPORT bool loadAI(const char*, int);
 
 EXPORT bool invokeAI();

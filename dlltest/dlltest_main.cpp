@@ -6,7 +6,7 @@
 
 #include "ui/uiapi.h"
 #include <iostream>
-#include <fstream>
+#include <cstring>
 #include <chrono>
 
 using namespace std;
@@ -28,6 +28,14 @@ int main(int argc, char** argv)
     int *id = new int[NUM];
     getPlayerIDs(id);
 
+    for (int i = 0; i < NUM; ++i)
+    {
+        char s[10];
+        itoa(i, s, 10);
+        strcat(s, "senshu");
+        setPlayerName(id[i], s);
+    }
+
     cout << "[dlltest_main] player id fetched." << endl;
 
 	for (int i = 0; i < NUM; ++i)
@@ -41,7 +49,9 @@ int main(int argc, char** argv)
 
     auto stime = system_clock::now();
 
-    int rounds = 1000;
+    int rounds = 600;
+    if (argc > 1)
+        rounds = atoi(argv[1]);
     for (int i = 0; i < rounds; ++i)
     {
         cout << "round #" << i << ": start." << endl;

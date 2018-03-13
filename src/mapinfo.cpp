@@ -122,3 +122,30 @@ vector<Vec2> MapInfo::getCorpses()
         res.push_back(it->pos);
     return res;
 }
+
+vector<ItemInfo> MapInfo::getAllMapInfo()
+{
+    vector<ItemInfo> res;
+    //Use life as the type
+    for (auto w : wards)
+    {
+        ItemInfo i = w;
+        i.life = 0;
+        res.push_back(i);
+    }
+    for (auto b : bombs)
+    {
+        ItemInfo i = b;
+        b.life = 1;
+        res.push_back(i);
+    }
+    for (auto c : deaths)
+    {
+        ItemInfo i;
+        i.id = c.id;
+        i.pos = c.pos;
+        i.life = 2;
+        res.push_back(i);
+    }
+    return res;
+}

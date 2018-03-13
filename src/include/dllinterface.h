@@ -65,6 +65,7 @@ bool DllInterface<Types...>::load(const char *fileName)
 template <typename... Types>
 bool DllInterface<Types...>::getCommands(Types... args)
 {
+    /*
     using namespace std::chrono;
     int ret = 0;
     auto run = [&ret, &args..., this]()
@@ -85,6 +86,9 @@ bool DllInterface<Types...>::getCommands(Types... args)
     while (system_clock::now() < terminateTime && ret == 0);
     aiThread->detach();
 	delete aiThread;
+    */
+    if (ai)
+        ai(args...);
     return true;
 }
 

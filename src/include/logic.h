@@ -98,6 +98,7 @@ private:
         commands.push_back(cmd);
     }
     std::string getCommandTypeName(CommandType);
+    std::string getActionTypeName(ActionType);
 };
 
 #endif  //LOGIC_H

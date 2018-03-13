@@ -55,10 +55,17 @@ vector<int> GameLogic::getIDs()
     return playerID;
 }
 
+#define DECLARE_MAPPING(parm, type) if ((parm) == (type)) return #type;
+string GameLogic::getActionTypeName(ActionType t)
+{
+    DECLARE_MAPPING(t, SelectDestination);
+    DECLARE_MAPPING(t, BuyItem);
+    DECLARE_MAPPING(t, UseItem);
+    DECLARE_MAPPING(t, SuckAttack);
+    return "NoAction";
+}
 string GameLogic::getCommandTypeName(CommandType t)
 {
-#define DECLARE_MAPPING(parm, type) if ((parm) == (type)) return #type;
-    DECLARE_MAPPING(t, NoCommand)
     DECLARE_MAPPING(t, MoveTo)
     DECLARE_MAPPING(t, BombThrown)
     DECLARE_MAPPING(t, BombExplode)
@@ -75,12 +82,16 @@ string GameLogic::getCommandTypeName(CommandType t)
     DECLARE_MAPPING(t, DayNightSwitch)
 	DECLARE_MAPPING(t, NightDaySwitch)
     DECLARE_MAPPING(t, GameSet)
-#undef DECLARE_MAPPING
     return "NoCommand";
 }
+#undef DECLARE_MAPPING
+
 void GameLogic::translateCommands()
 {
+    Json::FastWriter writer;
     Json::Value root;
+
+    Json::Value cmds;
     for (auto cmd : commands)
     {
         Json::Value jcmd;
@@ -97,9 +108,67 @@ void GameLogic::translateCommands()
             jcmd["dx"] = toJStr(cmd.direction.x);
             jcmd["dy"] = toJStr(cmd.direction.y);
         }
-        root.append(jcmd);
+        cmds.append(jcmd);
     }
-    Json::FastWriter writer;
+    root["cmds"] = cmds;
+    if (getCurrentRound() == 0)
+    {
+        jsoncmd = writer.write(root);
+        return;
+    }
+
+    Json::Value round;
+    for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
+    {
+        Json::Value junit;
+        Unit& unit = *(it->second);
+        junit["typ"] = (unit.getUnitType() == PlayerType) ? "p" : "v";
+        junit["id"] = it->first;
+        junit["hp"] = unit.hp;
+        junit["x"] = toJStr(unit.position.x);
+        junit["y"] = toJStr(unit.position.y);
+        junit["vx"] = toJStr(unit.velocity.x);
+        junit["vy"] = toJStr(unit.velocity.y);
+        if (unit.getUnitType() == PlayerType)
+        {
+            Player* pptr = dynamic_cast<Player*>(it->second);
+            Player& pl = *pptr;
+            junit["b"] = pl.bombCount;
+            junit["bcd"] = pl.bombCD;
+            junit["w"] = pl.wardCount;
+            junit["wcd"] = pl.wardCD;
+            junit["acd"] = pl.suckAttackCD;
+            junit["s"] = pl.score;
+        }
+        round.append(junit);
+    }
+    auto info = mapInfo.getAllMapInfo();
+    for (auto item : info)
+    {
+        Json::Value jinfo;
+        jinfo["id"] = item.id;
+        jinfo["x"] = toJStr(item.pos.x);
+        jinfo["y"] = toJStr(item.pos.y);
+        switch (item.life)
+        {
+            case 0:
+                jinfo["typ"] = "b";
+                jinfo["vx"] = toJStr(item.velocity.x);
+                jinfo["vy"] = toJStr(item.velocity.y);
+                jinfo["o"] = item.owner;
+                break;
+            case 1:
+                jinfo["typ"] = "w";
+                jinfo["o"] = item.owner;
+                break;
+            case 2:
+                jinfo["typ"] = "c";
+                break;
+            default: break;
+        }
+        round.append(jinfo);
+    }
+    root["round"] = round;
     jsoncmd = writer.write(root);
 }
 string GameLogic::getCommands()
@@ -557,7 +626,7 @@ void GameLogic::calcRound()
             if (unit.getUnitType() != PlayerType || unit.hp == 0 || unit.hp <= damages[unit.id])
                 continue;
             Vec2 pos = act.second.pos;
-            if (abs(pos.x) > MapSize || abs(pos.y) > MapSize)
+            if (mapInfo.inRange(pos))
                 continue;
             if (act.second.target_id == BombItem)    //炸弹
             {

@@ -6,6 +6,7 @@
 #include <cstring>
 #include <iostream>
 #include "ui/uinterface.h"
+#include "json/json.h"
 
 using namespace std;
 
@@ -30,7 +31,7 @@ void UInterface::setReplayFile(const char* rf)
     fout = fopen(rf, "w");
     if (!fout)
         fout = nullptr;
-    fprintf(fout, "{\"gameinfo:\"[");
+    fprintf(fout, "{\"gameinfo\":[");
 }
 void UInterface::init(int playerCount)
 {
@@ -49,6 +50,10 @@ void UInterface::getPlayerIDs(int* playerIDs)
     auto ivec = logic.getIDs();
     for (int i = 0; i < ivec.size(); ++i)
         playerIDs[i] = ids[i] = ivec[i];
+}
+void UInterface::setPlayerName(int playerID, const char* name)
+{
+    names[playerID] = string(name);
 }
 bool UInterface::loadAI(const char* aiPath, int playerID)
 {
@@ -75,11 +80,8 @@ bool UInterface::invokeAI()
     for (int i = 0; i < n; ++i)
     {
         Actions acts;
-        cout << "start collecting:" << i << endl;
         dlls[i]->getCommands(logic.getSight(ids[i]), &acts);
-        cout << "reporting:" << i << endl;
         logic.reportActions(ids[i], acts);
-        cout << "collected: " << i << endl;
     }
     return true;
 }
@@ -105,7 +107,12 @@ void UInterface::closeReplayFile()
 {
     if (fout == nullptr)
         return;
-	fprintf(fout, "],\"participants\":%d,\"rounds\":%d}\n", logic.getPlayerCount(), logic.getCurrentRound());
+	fprintf(fout, "],\"participants\":%d,\"rounds\":%d,", logic.getPlayerCount(), logic.getCurrentRound());
+    Json::Value jn;
+    for (auto id : ids)
+        jn[to_string(id)] = names[id];
+    Json::FastWriter fw;
+    fprintf(fout, "\"names\":%s}", fw.write(jn).c_str());
     fclose(fout);
     fout = nullptr;
 }

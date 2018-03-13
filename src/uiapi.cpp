@@ -17,6 +17,10 @@ void getPlayerIDs(int* playerIDs)
 {
     UInterface::getInstance()->getPlayerIDs(playerIDs);
 }
+void setPlayerName(int playerID, const char* name)
+{
+    UInterface::getInstance()->setPlayerName(playerID, name);
+}
 bool loadAI(const char* aiPath, int playerID)
 {
     return UInterface::getInstance()->loadAI(aiPath, playerID);

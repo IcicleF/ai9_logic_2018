@@ -7,6 +7,7 @@
 
 #include <string>
 #include <cstdio>
+#include <map>
 
 #include "../dllinterface.h"
 #include "../sdk/defs.h"
@@ -23,6 +24,7 @@ public:
 
     void init(int);
     void getPlayerIDs(int*);
+    void setPlayerName(int, const char*);
     bool loadAI(const char*, int);
     bool invokeAI();
     void run();
@@ -39,6 +41,7 @@ private:
 
     int n;
     std::vector<int> ids;
+    std::map<int, std::string> names;
     std::vector<AInterface*> dlls;
 
     std::string jsoncmd;
