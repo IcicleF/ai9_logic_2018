@@ -25,7 +25,6 @@ private:
 
     /**
      * currentTarget: 描述当前以哪个点为目标。
-     * 0: 左下角，1: 右下角，2: 右上角，3:右下角
      */
     int currentTarget;
     int activeRound;

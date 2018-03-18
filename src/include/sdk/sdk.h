@@ -37,10 +37,16 @@ namespace SDK
     float distanceTo(Vec2 start, Vec2 end);
 
     /**
-     * randAxis: 返回一个均匀分布在[-MapSize, MapSize)范围内的随机实数。
+     * randX: 返回一个均匀分布在[0, MapWidth)范围内的随机实数。
      * @return 随机实数
      */
-    float randAxis();
+    float randX();
+
+    /**
+     * randY: 返回一个均匀分布在[0, MapHeight)范围内的随机实数。
+     * @return 随机实数
+     */
+    float randY();
 
     /**
      * randPos: 返回一个均匀分布在[-MapSize, MapSize) * [-MapSize, MapSize)范围内的随机坐标。

@@ -54,14 +54,17 @@ int main(int argc, char** argv)
         rounds = atoi(argv[1]);
     for (int i = 0; i < rounds; ++i)
     {
-        cout << "round #" << i << ": start." << endl;
+        //cout << "round #" << i << ": start." << endl;
         invokeAI();
-        cout << "round #" << i << ": ai invoked." << endl;
+        //cout << "round #" << i << ": ai invoked." << endl;
         run();
-        cout << "round #" << i << ": round calced." << endl;
+        //cout << "round #" << i << ": round calced." << endl;
         if (checkWin() != -1)
             break;
     }
+
+    int winner = checkWin(true);
+    cout << "[dlltest_main] winner = " << winner << endl;
 
     auto etime = system_clock::now();
 

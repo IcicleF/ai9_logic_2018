@@ -18,7 +18,7 @@ void EscapeStrategy::generateActions(const PlayerSight &sight, Actions *actions)
         Vec2 goal;
         do          //使用Randomizer的AxisRnd，通过变换生成一个均匀分布在(0, 2π)的随机角度
         {
-            float rad = (Randomizer::getInstance()->randAxis()) * PI / MapSize + PI;
+            float rad = (Randomizer::getInstance()->randXAxis()) * PI / MapWidth + PI;
             Vec2 e0(cos(rad), sin(rad));
             goal = sight.pos + e0 * PlayerVelocity;
         } while (Router::getInstance()->Reachable(goal));

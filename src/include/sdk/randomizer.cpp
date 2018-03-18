@@ -16,25 +16,31 @@ Randomizer::Randomizer()
 {
     auto seed = chrono::system_clock::now().time_since_epoch().count();
     RndCore = new mt19937(seed);
-    AxisRnd = new uniform_real_distribution<float>(-MapSize, MapSize);
+    XAxisRnd = new uniform_real_distribution<float>(0, MapWidth);
+    YAxisRnd = new uniform_real_distribution<float>(0, MapHeight);
     RespawnRnd = new uniform_real_distribution<float>(-1, 39);
     WanderRnd = new uniform_int_distribution<int>(WanderIntervalLB, WanderIntervalUB);
 }
 Randomizer::~Randomizer()
 {
     delete RndCore;
-    delete AxisRnd;
+    delete XAxisRnd;
+    delete YAxisRnd;
     delete RespawnRnd;
     delete WanderRnd;
 }
 
-float Randomizer::randAxis()
+float Randomizer::randXAxis()
 {
-    return (*AxisRnd)(*RndCore);
+    return (*XAxisRnd)(*RndCore);
+}
+float Randomizer::randYAxis()
+{
+    return (*YAxisRnd)(*RndCore);
 }
 Vec2 Randomizer::randPosition()
 {
-    return Vec2(randAxis(), randAxis());
+    return Vec2(randXAxis(), randYAxis());
 }
 bool Randomizer::randSpawnJudger()
 {

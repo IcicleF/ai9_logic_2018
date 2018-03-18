@@ -2,9 +2,9 @@
 #include "randomizer.h"
 #include <algorithm>
 
-using namespace std;
-
 #define MAX_POINTS 100
+
+using namespace std;
 
 Router* Router::getInstance()
 {
@@ -13,17 +13,24 @@ Router* Router::getInstance()
 }
 Router::Router()
 {
-    ObstacleCount = 4;
-    Obstacles.resize(4);
+    ObstacleCount = 11;
+    Obstacles.resize(ObstacleCount);
 
-    setObstacle(Obstacles[0], 5.0, 5.0, 15.0, 15.0);
-    setObstacle(Obstacles[1], -15.0, 5.0, -5.0, 15.0);
-    setObstacle(Obstacles[2], -15.0, -15.0, -5.0, -5.0);
-    setObstacle(Obstacles[3], 5.0, -15.0, 15.0, -5.0);
+    setObstacle(Obstacles[0],  0,  0, 21,  7);
+    setObstacle(Obstacles[1], 15,  9, 25, 17);
+    setObstacle(Obstacles[2],  0, 11, 15, 22);
+    setObstacle(Obstacles[3],  0, 22, 25, 29);
+    setObstacle(Obstacles[4], 31,  7, 42, 28);
+    setObstacle(Obstacles[5], 42,  0, 60, 52);
+    setObstacle(Obstacles[6], 22, 31, 39, 48);
+    setObstacle(Obstacles[7],  0, 44, 10, 54);
+    setObstacle(Obstacles[8],  0, 54, 23, 90);
+    setObstacle(Obstacles[9], 27, 86, 60, 90);
+    setObstacle(Obstacles[10],37, 68, 51, 82);
 }
 bool Router::Reachable(Vec2 pos)
 {
-    if (abs(pos.x) > MapSize || abs(pos.y) > MapSize)
+    if (pos.x < 0 || pos.x > MapWidth || pos.y < 0 || pos.y > MapHeight)
         return false;
     for (int i = 0; i < ObstacleCount; ++i)
         if (pos.x >= Obstacles[i][0].x - ObsBorder
@@ -51,7 +58,7 @@ std::vector<Vec2> Router::Route(Vec2 start, Vec2 end)
         return res;
     }
 
-    int Points = ObstacleCount * 4 + 2;
+    int Points = 0;
 
     float dis[MAX_POINTS];					//起点到该点的最短距离
 	float edges[MAX_POINTS][MAX_POINTS];    //边权
@@ -60,15 +67,22 @@ std::vector<Vec2> Router::Route(Vec2 start, Vec2 end)
 	bool used[MAX_POINTS];                  //点是否已松弛过
 
     //todo: 已知的连线做硬编码，或者预存
-    vertex[0] = start, vertex[Points - 1] = end;
+    vertex[Points++] = start;
     for (int i = 0; i < ObstacleCount; ++i)
     {
-        int j = 1 + i * 4;
-        vertex[j + 0] = Obstacles[i][0] + Vec2(-ObsBorder, -ObsBorder);
-        vertex[j + 1] = Obstacles[i][1] + Vec2(-ObsBorder, ObsBorder);
-        vertex[j + 2] = Obstacles[i][2] + Vec2(ObsBorder, ObsBorder);
-        vertex[j + 3] = Obstacles[i][3] + Vec2(ObsBorder, -ObsBorder);
+        Vec2 t0 = Obstacles[i][0] + Vec2(-ObsBorder, -ObsBorder);
+        Vec2 t1 = Obstacles[i][1] + Vec2(-ObsBorder, ObsBorder);
+        Vec2 t2 = Obstacles[i][2] + Vec2(ObsBorder, ObsBorder);
+        Vec2 t3 = Obstacles[i][3] + Vec2(ObsBorder, -ObsBorder);
+#define CHECK(t) if (t.x >= 0 && t.x <= MapWidth && t.y >= 0 && t.y <= MapHeight) vertex[Points++] = t;
+        CHECK(t0)
+        CHECK(t1)
+        CHECK(t2)
+        CHECK(t3)
+#undef CHECK
     }
+    vertex[Points++] = end;
+
     for (int i = 0; i < Points; ++i)
     {
         prev[i] = -1;

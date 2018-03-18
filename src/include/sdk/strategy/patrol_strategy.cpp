@@ -20,23 +20,27 @@ void PatrolStrategy::generateActions(const PlayerSight &sight, Actions *actions)
         {
             status = psWalking;
             activeRound = 0;
-            currentTarget = (currentTarget + 1) % 4;
-            Vec2 goal = Randomizer::getInstance()->randPosition() * 4 / MapSize;
+            currentTarget = (currentTarget + 1) % 5;
+            Vec2 goal(Randomizer::getInstance()->randXAxis() * 4 / MapWidth,
+                      Randomizer::getInstance()->randYAxis() * 4 / MapHeight);
             switch (currentTarget)
             {
-                case 0:  //LD
-                    goal = goal + Vec2(-MapSize + 6, -MapSize + 6);
+                case 0:
+                    goal = goal + Vec2(27, 82);
                     break;
-                case 1:  //LU
-                    goal = goal + Vec2(-MapSize + 6, MapSize - 6);
+                case 1:
+                    goal = goal + Vec2(16, 46);
                     break;
-                case 2:  //RU
-                    goal = goal + Vec2(MapSize - 6, -MapSize - 6);
+                case 2:
+                    goal = goal + Vec2(23, 7);
                     break;
-                case 3:  //RD
-                    goal = goal + Vec2(MapSize - 6, -MapSize + 6);
+                case 3:
+                    goal = goal + Vec2(40, 55);
                     break;
-                default: //Illegal, ought not happen
+                case 4:
+                    goal = goal + Vec2(55, 84);
+                    break;
+                default:
                     goal = sight.pos;
             }
             actions->emplace(SelectDestination, sight.id, goal);

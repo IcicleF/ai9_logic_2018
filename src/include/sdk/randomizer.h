@@ -14,7 +14,8 @@ public:
     static Randomizer* getInstance();
     ~Randomizer();
 
-    float randAxis();
+    float randXAxis();
+    float randYAxis();
     Vec2 randPosition();
     bool randSpawnJudger();
     int randWaitTime();
@@ -23,7 +24,7 @@ private:
     Randomizer();
 
     std::mt19937 *RndCore;
-    std::uniform_real_distribution<float> *AxisRnd;
+    std::uniform_real_distribution<float> *XAxisRnd, *YAxisRnd;
     std::uniform_real_distribution<float> *RespawnRnd;
     std::uniform_int_distribution<int> *WanderRnd;
 };

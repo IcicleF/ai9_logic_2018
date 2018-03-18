@@ -32,7 +32,7 @@ void GameLogic::startGame(int _playerCount)         //初始化游戏，设置�
     }
 
     //创建初始村民
-    for (int i = 0; i < InitialVillagers; ++i)
+    for (int i = 0; i < InitialVillagers * playerCount; ++i)
     {
         int id = idManager.newID();
         unitInfo[id] = new Unit(this);
@@ -91,11 +91,12 @@ void GameLogic::translateCommands()
     Json::FastWriter writer;
     Json::Value root;
 
+    root["time"] = getCurrentRound();
+
     Json::Value cmds;
     for (auto cmd : commands)
     {
         Json::Value jcmd;
-        jcmd["tim"] = getCurrentRound();
         jcmd["typ"] = getCommandTypeName(cmd.commandType);
         jcmd["id"] = cmd.unit_id;
         jcmd["x"] = toJStr(cmd.pos.x);
@@ -117,6 +118,7 @@ void GameLogic::translateCommands()
         return;
     }
 
+#ifndef HIDE_ROUND_INFO
     Json::Value round;
     for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
     {
@@ -169,6 +171,7 @@ void GameLogic::translateCommands()
         round.append(jinfo);
     }
     root["round"] = round;
+#endif
     jsoncmd = writer.write(root);
 }
 string GameLogic::getCommands()
@@ -182,8 +185,6 @@ string GameLogic::getCommands()
  */
 PlayerSight GameLogic::getSight(int pid)
 {
-    cout << "[logic] getSight start" << endl;
-
     PlayerSight res;
     if (unitInfo.find(pid) == unitInfo.end())
         return res;
@@ -313,8 +314,6 @@ PlayerSight GameLogic::getSight(int pid)
     sort(res.scoreBoard.begin(), res.scoreBoard.end());
     reverse(res.scoreBoard.begin(), res.scoreBoard.end());
 
-    cout << "[logic] sight" << endl;
-
     return res;
 }
 
@@ -410,8 +409,6 @@ void GameLogic::preCalc()
         if (it->second->getUnitType() == VillagerType)
             it->second->getAction();
 
-    cout << "[logic] unit mov" << endl;
-
     //发放工资
     if (getCurrentRound() % SalaryPeriod == 0)
         for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
@@ -421,8 +418,6 @@ void GameLogic::preCalc()
                 pptr->gold += Salary;
                 addCommand(GoldChange, pptr->id, Salary);
             }
-
-    cout << "[logic] salary" << endl;
 }
 
 void GameLogic::calcRound()
@@ -450,8 +445,6 @@ void GameLogic::calcRound()
                 }
     }
 
-    cout << "[logic] - bomb" << endl;
-
     //计算灼烧伤害
     if (getCurrentDayPeriod() == Day && getCurrentRound() % BurnPeriod == 0)
         for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
@@ -461,8 +454,6 @@ void GameLogic::calcRound()
                 continue;
             damages[it->first] += BurnDamage;
         }
-
-    cout << "[logic] - burn" << endl;
 
     //处理普通攻击
     for (auto act : actions)
@@ -495,8 +486,6 @@ void GameLogic::calcRound()
             damages[target_id] += SuckDamage;
             damageGiver[target_id].insert(id);
         }
-
-    cout << "[logic] damage" << endl;
 
     //计算单位死亡和金钱奖励
     for (auto it = damages.begin(); it != damages.end(); ++it)
@@ -582,8 +571,6 @@ void GameLogic::calcRound()
             ++it;
     }
 
-    cout << "[logic] deaths, punishment & bonus" << endl;
-
     //计算道具的购买
     for (auto act : actions)
         if (act.second.actionType == BuyItem)
@@ -648,8 +635,6 @@ void GameLogic::calcRound()
             }
         }
     }
-
-    cout << "[logic] item" << endl;
 
     //计算单位移动
     for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
@@ -725,8 +710,6 @@ void GameLogic::calcRound()
         }
     }
 
-    cout << "[logic] movement" << endl;
-
     //死亡惩罚结束的玩家重生
     for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
         if (it->second->hp == 0 && it->second->respawnWhen == getCurrentRound())
@@ -749,8 +732,6 @@ void GameLogic::calcRound()
 
         addCommand(UnitSpawn, id, unitInfo[id]->position);
     }
-
-    cout << "[logic] respawn" << endl;
 
     translateCommands();
     logicStat = DistributingCommands;

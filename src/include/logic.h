@@ -82,7 +82,7 @@ private:
     void refresh();
     void clearRoundRecord()
     {
-        std::cout << this->round << std::endl;
+        //std::cout << this->round << std::endl;
         actions.clear();
         commands.clear();
     }

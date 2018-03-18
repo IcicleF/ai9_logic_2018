@@ -5,7 +5,7 @@ using namespace std;
 
 bool MapInfo::inRange(Vec2 p)
 {
-    return p.x >= -MapSize && p.x <= MapSize && p.y >= -MapSize && p.y <= MapSize;
+    return p.x >= 0 && p.x <= MapWidth && p.y >= 0 && p.y <= MapHeight;
 }
 vector<pair<int, Vec2> > MapInfo::calcCommands(GameLogic *caller)
 {
