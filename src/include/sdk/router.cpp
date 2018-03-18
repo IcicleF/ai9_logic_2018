@@ -27,6 +27,41 @@ Router::Router()
     setObstacle(Obstacles[8],  0, 54, 23, 90);
     setObstacle(Obstacles[9], 27, 86, 60, 90);
     setObstacle(Obstacles[10],37, 68, 51, 82);
+
+    for (int i = 0; i < ObstacleCount; ++i)
+    {
+        Vec2 t0 = Obstacles[i][0] + Vec2(-ObsBorder, -ObsBorder);
+        Vec2 t1 = Obstacles[i][1] + Vec2(-ObsBorder, ObsBorder);
+        Vec2 t2 = Obstacles[i][2] + Vec2(ObsBorder, ObsBorder);
+        Vec2 t3 = Obstacles[i][3] + Vec2(ObsBorder, -ObsBorder);
+#define CHECK(t) if (t.x >= 0 && t.x <= MapWidth && t.y >= 0 && t.y <= MapHeight) Vertexes.push_back(t);
+        CHECK(t0)
+        CHECK(t1)
+        CHECK(t2)
+        CHECK(t3)
+#undef CHECK
+    }
+    VertexCount = Vertexes.size();
+    Edges.resize(VertexCount);
+    for (int i = 0; i < VertexCount; ++i)
+        Edges[i].resize(VertexCount);
+    for (int i = 0; i < VertexCount; ++i)
+        for (int j = i + 1; j < VertexCount; ++j)
+        {
+            bool flag = true;
+            for (int u = 0; u < ObstacleCount; ++u)
+            {
+                for (int v = 0; v < 4; ++v)
+                    if (intersect(Vertexes[i], Vertexes[j], Obstacles[u][v], Obstacles[u][(v + 1) & 3]))
+                    {
+                        flag = false;
+                        break;
+                    }
+                if (!flag)
+                    break;
+            }
+            Edges[i][j] = Edges[j][i] = (flag ? (Vertexes[i] - Vertexes[j]).length() : FINF);
+        }
 }
 bool Router::Reachable(Vec2 pos)
 {
@@ -58,7 +93,7 @@ std::vector<Vec2> Router::Route(Vec2 start, Vec2 end)
         return res;
     }
 
-    int Points = 0;
+    int Points = VertexCount;
 
     float dis[MAX_POINTS];					//起点到该点的最短距离
 	float edges[MAX_POINTS][MAX_POINTS];    //边权
@@ -66,31 +101,24 @@ std::vector<Vec2> Router::Route(Vec2 start, Vec2 end)
 	int prev[MAX_POINTS];					//点的前驱，回溯最短路用
 	bool used[MAX_POINTS];                  //点是否已松弛过
 
-    //todo: 已知的连线做硬编码，或者预存
+    for (int i = 0; i < Points; ++i)
+        vertex[i] = Vertexes[i];
     vertex[Points++] = start;
-    for (int i = 0; i < ObstacleCount; ++i)
-    {
-        Vec2 t0 = Obstacles[i][0] + Vec2(-ObsBorder, -ObsBorder);
-        Vec2 t1 = Obstacles[i][1] + Vec2(-ObsBorder, ObsBorder);
-        Vec2 t2 = Obstacles[i][2] + Vec2(ObsBorder, ObsBorder);
-        Vec2 t3 = Obstacles[i][3] + Vec2(ObsBorder, -ObsBorder);
-#define CHECK(t) if (t.x >= 0 && t.x <= MapWidth && t.y >= 0 && t.y <= MapHeight) vertex[Points++] = t;
-        CHECK(t0)
-        CHECK(t1)
-        CHECK(t2)
-        CHECK(t3)
-#undef CHECK
-    }
     vertex[Points++] = end;
 
     for (int i = 0; i < Points; ++i)
     {
         prev[i] = -1;
         used[i] = false;
-        dis[i] = (i == 0 ? 0 : FINF);
+        dis[i] = (i == VertexCount ? 0 : FINF);
         edges[i][i] = 0;
         for (int j = i + 1; j < Points; ++j)
         {
+            if (i < VertexCount && j < VertexCount)
+            {
+                edges[i][j] = edges[j][i] = Edges[i][j];
+                break;
+            }
             bool flag = true;
             for (int u = 0; u < ObstacleCount; ++u)
             {

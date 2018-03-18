@@ -32,8 +32,10 @@ private:
             && ((A - C) * (A - B)) * ((A - D) * (A - B)) <= EPS;
     }
 
-    int ObstacleCount;
+    int ObstacleCount, VertexCount;
     std::vector<std::vector<Vec2> > Obstacles;        //n*4数组
+    std::vector<Vec2> Vertexes;
+    std::vector<std::vector<float> > Edges;
 };
 
 #endif  //ROUTER_H
