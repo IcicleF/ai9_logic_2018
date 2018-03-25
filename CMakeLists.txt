@@ -29,11 +29,14 @@ add_library(lib_ai9_logic_2018 OBJECT src/json/json.h src/json/json-forwards.h s
 add_library(lib_logic SHARED $<TARGET_OBJECTS:lib_ai9_logic_2018>)
 
 add_executable(api_test dlltest/dlltest_main.cpp)
+add_executable(judger judger/judger.cpp)
 target_link_libraries(api_test lib_logic)
+target_link_libraries(judger lib_logic)
 
 add_subdirectory(ai)
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 else()
     target_link_libraries(api_test dl pthread)
+    target_link_libraries(judger dl pthread)
 endif()

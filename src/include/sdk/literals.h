@@ -23,7 +23,7 @@ const int BurnDamage = 5;                       //每一个灼烧周期玩家损
 const int BurnPeriod = 10;                      //灼烧周期长度（内部回合数）
 const int SuckDamage = 70;                      //吸血攻击力
 const float SuckDrainCoeff = 0.5;               //吸血攻击回复量等于攻击力乘以该补正系数
-const float SuckRange = 5.0;                    //吸血的攻击范围
+const float SuckRange = 3.0;                    //吸血的攻击范围
 const int SuckAttackCD = 10;                    //吸血攻击的CD（内部回合数）
 
 const int InitialVillagers = 5;                 //初始村民数量 * 玩家人数
@@ -49,16 +49,16 @@ const float BombRadius = 10.0;                  //炸弹的爆炸半径
 const int WardPrice = 5;                        //守卫的价格
 const int WardCD = 200;                         //使用守卫的CD（内部回合数）
 const int WardDuration = 100;                   //守卫的持续时间（内部回合数）
-const float WardRadius = 15.0;                  //守卫的监视半径
+const float WardRadius = 30.0;                  //守卫的监视半径
 const float WardPlaceRadius = 7.0;              //守卫的放置半径
 
 /*
  *  昼夜
  */
 const int DayTime = 200;                        //白昼时间（内部回合数）
-const float DaySight = 30.0;                    //白昼视野
+const float DaySight = 50.0;                    //白昼视野
 const int NightTime = 150;                      //夜晚时间（内部回合数）
-const float NightSight = 10.0;                  //夜晚视野
+const float NightSight = 20.0;                  //夜晚视野
 
 enum DayPeriod
 {

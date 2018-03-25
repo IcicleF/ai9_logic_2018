@@ -55,7 +55,7 @@ bool DllInterface<Types...>::load(const char *fileName)
     dll = dlopen(fileName, RTLD_NOW);
     if (!dll)
         return false;
-    ai = reinterpret_cast<AIFunction>(dlsym(dll, AIFuncName));
+    ai = reinterpret_cast<AIFunction>(dlsym(dll, "playerAI"));
     if (!ai)
         return false;
 #endif

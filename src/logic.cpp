@@ -613,7 +613,7 @@ void GameLogic::calcRound()
             if (unit.getUnitType() != PlayerType || unit.hp == 0 || unit.hp <= damages[unit.id])
                 continue;
             Vec2 pos = act.second.pos;
-            if (mapInfo.inRange(pos))
+            if (!mapInfo.inRange(pos))
                 continue;
             if (act.second.target_id == BombItem)    //炸弹
             {

@@ -10,6 +10,12 @@
 #include "router.h"
 #include "strategy/actionmaker.h"
 
+#if defined(_MSC_VER) || defined(__MINGW32__)
+#define AI_API __declspec(dllexport)
+#else
+#define AI_API
+#endif
+
 namespace SDK
 {
     /**

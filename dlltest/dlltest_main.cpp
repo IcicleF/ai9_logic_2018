@@ -30,9 +30,8 @@ int main(int argc, char** argv)
 
     for (int i = 0; i < NUM; ++i)
     {
-        char s[10];
-        itoa(i, s, 10);
-        strcat(s, "senshu");
+        char s[15] = "ATTENDANT #X";
+        s[11] = '0' + i;
         setPlayerName(id[i], s);
     }
 
