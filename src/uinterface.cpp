@@ -7,13 +7,10 @@
 #include <iostream>
 #include "ui/uinterface.h"
 #include "json/json.h"
+#include "miniz/miniz.h"
 
 using namespace std;
 
-UInterface::UInterface()
-{
-    fout = nullptr;
-}
 UInterface::~UInterface()
 {
     for (auto dll : dlls)
@@ -28,19 +25,30 @@ UInterface* UInterface::getInstance()
 }
 void UInterface::setReplayFile(const char* rf)
 {
+    /*
     fout = fopen(rf, "w");
     if (!fout)
         fout = nullptr;
     fprintf(fout, "{\"gameinfo\":[");
+    */
+    string s(rf);
+    if (s.substr(s.length() - 4) != ".zip")
+        s += ".zip";
+    outfile = s;
+
+    full_json = "{\"gameinfo\":[";
 }
 void UInterface::init(int playerCount)
 {
     n = playerCount;
     logic.startGame(n);
     jsoncmd = logic.getCommands();
+    /*
     if (fout == nullptr)
         return;
     fprintf(fout, "%s", jsoncmd.c_str());
+    */
+    full_json += jsoncmd;
 
     ids.assign(n, -1);
     dlls.assign(n, nullptr);
@@ -89,9 +97,12 @@ void UInterface::run()
 {
     logic.calcRound();
     jsoncmd = logic.getCommands();
+    /*
     if (fout == nullptr)
         return;
     fprintf(fout, ", %s", jsoncmd.c_str());
+    */
+    full_json += jsoncmd;
 }
 void UInterface::getCommands(char* commandStr)
 {
@@ -109,16 +120,31 @@ void UInterface::getRank(int* playerRank)
 }
 void UInterface::closeReplayFile()
 {
+    /*
     if (fout == nullptr)
         return;
-    fprintf(fout, R"(],"participants":%d,"rounds":%d,)", logic.getPlayerCount(), logic.getCurrentRound());
+    fprintf(fout, "(],\"participants\":%d,\"rounds\":%d,)", logic.getPlayerCount(), logic.getCurrentRound());
+    */
+    full_json += "],\"participants\":" + to_string(logic.getPlayerCount())
+                 + ",\"rounds\":" + to_string(logic.getCurrentRound()) + "%d,";
+
     Json::Value jn;
     for (auto id : ids)
         jn[to_string(id)] = names[id];
+
     Json::FastWriter fw;
+    /*
     fprintf(fout, "\"names\":%s}", fw.write(jn).c_str());
     fclose(fout);
     fout = nullptr;
+    */
+    full_json += "\"names\":" + fw.write(jn) + "}";
+
+    //Compressing
+    int status = mz_zip_add_mem_to_archive_file_in_place(outfile.c_str(), "replay.json", full_json.c_str(), full_json.length() + 1, "", 0, MZ_DEFAULT_LEVEL);
+    if (!status)
+        return;
+    full_json.clear();
 }
 
 int UInterface::mapInnerID(int logicID)

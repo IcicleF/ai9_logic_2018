@@ -35,7 +35,7 @@ public:
     void closeReplayFile();
 
 private:
-    explicit UInterface();
+    explicit UInterface() = default;
     GameLogic logic;
 
     int mapInnerID(int);
@@ -46,7 +46,8 @@ private:
     std::vector<AInterface*> dlls;
 
     std::string jsoncmd;
-    FILE *fout;
+    std::string full_json;
+    std::string outfile;
 };
 
 #endif //UINTERFACE_H

@@ -37,7 +37,7 @@ int main(int argc, char** argv)
     if (parm.find("rounds") != parm.end())
         maxRounds = stoi(parm["rounds"]);
 
-    string replayFile("replay.json");
+    string replayFile("replay.zip");
     if (parm.find("replay") != parm.end())
         replayFile = parm["replay"];
 
