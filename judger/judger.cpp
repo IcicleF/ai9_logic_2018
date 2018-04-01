@@ -44,7 +44,7 @@ int main(int argc, char** argv)
     setReplayFile(replayFile.c_str());
 
     init(playerNum);
-    int id[playerNum] = {0};
+    int id[playerNum + 5] = {0};
     getPlayerIDs(id);
 
     for (int i = 0; i < playerNum; ++i)
@@ -79,13 +79,17 @@ int main(int argc, char** argv)
             break;
     }
 
-    int winner = checkWin(true);
+    int rank[playerNum + 5] = {0};
+    getRank(rank);
+
     for (int i = 0; i < playerNum; ++i)
-        if (id[i] == winner)
-        {
-            cout << i << endl;
-            break;
-        }
+        for (int j = 0; j < playerNum; ++j)
+            if (rank[i] == id[j])
+            {
+                cout << j << " ";
+                break;
+            }
+    cout << endl;
 
     closeReplayFile();
     return 0;

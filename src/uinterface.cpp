@@ -103,6 +103,10 @@ int UInterface::checkWin(bool forced)
 {
     return logic.judgeWin(forced);
 }
+void UInterface::getRank(int* playerRank)
+{
+    logic.getRank(playerRank);
+}
 void UInterface::closeReplayFile()
 {
     if (fout == nullptr)

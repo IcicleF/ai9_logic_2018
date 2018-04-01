@@ -37,9 +37,13 @@ void getCommands(char* commandStr)
 {
     UInterface::getInstance()->getCommands(commandStr);
 }
-int checkWin(bool forced)
+int checkWin()
 {
-    return UInterface::getInstance()->checkWin(forced);
+    return UInterface::getInstance()->checkWin(false);
+}
+void getRank(int* playerRank)
+{
+    UInterface::getInstance()->getRank(playerRank);
 }
 void closeReplayFile()
 {

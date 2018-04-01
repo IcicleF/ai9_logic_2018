@@ -329,53 +329,60 @@ PlayerSight GameLogic::getSight(int pid)
  *  4. 总击杀数一样，比较击杀村民数，击杀村民数少者胜出；
  *  5. 如果还是一样，那么就随机= =。
  */
+bool GameLogic::plcomp(const Player &x, const Player &y)
+{
+    if (x.score != y.score)
+        return x.score < y.score;
+    if (x.gold != y.gold)
+        return x.gold < y.gold;
+    if (x.killedVillager + x.killedEnemy != y.killedVillager + y.killedEnemy)
+        return x.killedVillager + x.killedEnemy > y.killedVillager + y.killedEnemy;
+    return x.killedVillager >= y.killedVillager;
+}
 int GameLogic::judgeWin(bool forced)
 {
-    int maxScore = 0, maxGold = 0, minKills = 0, minVillagerKill = 0;
-    int winner = -1;        //ID
+    Player* winner = nullptr;
+    int res = -1;
     for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
         if (it->second->getUnitType() == PlayerType)
         {
             Unit* uptr = it->second;
             Player* pptr = dynamic_cast<Player*>(uptr);
-            Player& pl = *pptr;
 
-            bool flag = false;
-            if (winner == -1)
-                flag = true;
-            else if (maxScore < pl.score)
-                flag = true;
-            else if (maxScore == pl.score)
-            {
-                if (maxGold < pl.gold)
-                    flag = true;
-                else if (maxGold == pl.gold)
-                {
-                    if (minKills > pl.killedVillager + pl.killedEnemy)
-                        flag = true;
-                    else if (minKills == pl.killedVillager + pl.killedEnemy)
-                    {
-                        if (minVillagerKill > pl.killedVillager)
-                            flag = true;
-                    }
-                }
-            }
-            if (flag)
-            {
-                winner = it->first;
-                maxScore = pl.score;
-                maxGold = pl.gold;
-                minKills = pl.killedEnemy + pl.killedVillager;
-                minVillagerKill = pl.killedVillager;
-            }
+            if (winner == nullptr)
+                winner = pptr, res = it->first;
+            else if (plcomp(*winner, *pptr))
+                winner = pptr, res = it->first;
         }
-    if (forced || maxScore >= GameSetLimit)
+    if (forced || winner->score >= GameSetLimit)
     {
         addCommand(GameSet, -1);
         logicStat = GameEnded;
-        return winner;
+        return res;
     }
     return -1;
+}
+void GameLogic::getRank(int *rank)
+{
+    vector<Player*> pptrs;
+    for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
+        if (it->second->getUnitType() == PlayerType)
+            pptrs.push_back(dynamic_cast<Player *>(it->second));
+    if (pptrs.size() != playerCount)
+    {
+        cout << "WTF" << endl;
+        return;
+    }
+    for (int i = 0; i < playerCount; ++i)
+        for (int j = i + 1; j < playerCount; ++j)
+            if (!plcomp(*pptrs[i], *pptrs[j]))
+            {
+                Player* tmp = pptrs[i];
+                pptrs[i] = pptrs[j];
+                pptrs[j] = tmp;
+            }
+    for (int i = 0; i < playerCount; ++i)
+        rank[i] = pptrs[i]->id;
 }
 
 //新回合刷新

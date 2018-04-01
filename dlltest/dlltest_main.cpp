@@ -3,6 +3,7 @@
 //
 
 /* Purpose: Dll API Test*/
+/* Now cancelled because of the existence of judger/judger.cpp */
 
 #include "ui/uiapi.h"
 #include <iostream>
@@ -22,6 +23,7 @@ const char dllpath[] = "ai/librouterSpeedAI.dll";
 
 int main(int argc, char** argv)
 {
+    /*
     setReplayFile("output.txt");
     init(NUM);
 
@@ -75,5 +77,6 @@ int main(int argc, char** argv)
     cout << "Time cost: " << double(duration.count()) << "ms" << endl;
 
     delete[] id;
+    */
     return 0;
 }

@@ -47,7 +47,9 @@ EXPORT void run();
 
 EXPORT void getCommands(char*);
 
-EXPORT int checkWin(bool forced = false);
+EXPORT int checkWin();
+
+EXPORT void getRank(int*);
 
 EXPORT void closeReplayFile();
 

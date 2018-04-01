@@ -45,12 +45,12 @@ public:
             return;
         clearRoundRecord();
         logicStat = WaitingPlayerActions;
-
     }
     void reportActions(int pid, const Actions& _actions);
     void preCalc();
     void calcRound();
     int judgeWin(bool forced = false);
+    void getRank(int* rank);
 
     void addCommand(CommandType type, int id, Vec2 pos = Vec2())
     {
@@ -99,6 +99,8 @@ private:
     }
     std::string getCommandTypeName(CommandType);
     std::string getActionTypeName(ActionType);
+
+    bool plcomp(const Player& x, const Player& y);
 };
 
 #endif  //LOGIC_H
