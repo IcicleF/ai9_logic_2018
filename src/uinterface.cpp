@@ -111,7 +111,7 @@ void UInterface::closeReplayFile()
 {
     if (fout == nullptr)
         return;
-	fprintf(fout, "],\"participants\":%d,\"rounds\":%d,", logic.getPlayerCount(), logic.getCurrentRound());
+    fprintf(fout, R"(],"participants":%d,"rounds":%d,)", logic.getPlayerCount(), logic.getCurrentRound());
     Json::Value jn;
     for (auto id : ids)
         jn[to_string(id)] = names[id];

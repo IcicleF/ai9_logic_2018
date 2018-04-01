@@ -5,6 +5,8 @@
 /CMakeFiles/*
 ai/CMakeFiles/*
 /build/*
+/user/build/*
+
 
 # MinGW Makefile
 
