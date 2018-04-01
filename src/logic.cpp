@@ -77,6 +77,7 @@ string GameLogic::getCommandTypeName(CommandType t)
     DECLARE_MAPPING(t, GoldChange)
     DECLARE_MAPPING(t, HPChange)
     DECLARE_MAPPING(t, ScoreChange)
+    DECLARE_MAPPING(t, PlayerAttack)
     DECLARE_MAPPING(t, UnitDie)
     DECLARE_MAPPING(t, UnitSpawn)
     DECLARE_MAPPING(t, DayNightSwitch)
@@ -482,6 +483,7 @@ void GameLogic::calcRound()
                 continue;
 
             unit.suckAttack();
+            addCommand(PlayerAttack, id, target_id, SuckDamage, target.position, target.position - unit.position);
             damages[id] -= int(SuckDamage * SuckDrainCoeff);
             damages[target_id] += SuckDamage;
             damageGiver[target_id].insert(id);

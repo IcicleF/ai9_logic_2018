@@ -30,6 +30,7 @@ enum CommandType
     GoldChange,                                 //特定玩家金钱数目改变
     HPChange,                                   //特定单位生命值改变
     ScoreChange,                                //特定玩家得分改变
+	PlayerAttack,								//特定玩家攻击
     UnitDie,                                    //特定单位死亡
     UnitSpawn,                                  //特定单位在特定地点出生
     DayNightSwitch,                             //昼夜转换
