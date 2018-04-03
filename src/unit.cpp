@@ -20,12 +20,6 @@ Unit::Unit(GameLogic *caller)
 }
 void Unit::getAction()
 {
-    /**
-     * todo
-     * 要对玩家“友好”。现在的情况是，村民漫无目的地乱走，这情况对玩家来说可能比较困难。
-     * 因此，考虑在村民的移动中，随机地加入一些确定性的动作（走平行坐标轴直线？目前还没想好）
-     * 通过这种手段，有意识地将玩家的关注点转移到这些确定性的动作上，诱导他们主动通过这些动作进行模式识别，同时伪装自己。
-     */
     Actions act;
     if (logic->getCurrentRound() >= waitUntil)
     {
@@ -33,7 +27,10 @@ void Unit::getAction()
         act.emplace(SelectDestination, -1, Router::getInstance()->availablePosition());
     }
     else if (currentTarget == -1)
+    {
         waitUntil = logic->getCurrentRound() + Randomizer::getInstance()->randWaitTime();
+        currentTarget = 0;
+    }
     logic->reportActions(this->id, act);
 }
 
