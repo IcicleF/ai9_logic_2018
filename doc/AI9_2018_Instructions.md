@@ -4,7 +4,9 @@
 
 ## 前言
 
-欢迎您参加 2018 年智能体大赛。如果您阅读到此处，想必您已经熟悉逻辑运作的模式，并且做好编写 AI 并参赛的准备。为了您的方便，我们向您提供这份指导教程，使您能了解逻辑与 AI 的交互方式，以及 SDK 的使用方法。
+欢迎您参加 2018 年智能体大赛。在阅读本文档之前，请先阅读
+
+如果您阅读到此处，想必您已经熟悉逻辑运作的模式，并且做好编写 AI 并参赛的准备。为了您的方便，我们向您提供这份指导教程，使您能了解逻辑与 AI 的交互方式，以及 SDK 的使用方法。
 
 如您认为本文档中有明显的错误，欢迎您在智能体大赛 QQ 群中提出，或者联系<a href="mailto:icicle.flw@gmail.com">icicle.flw@gmail.com</a>。我们将尽快给出回复。
 
@@ -68,7 +70,7 @@ PlayerSight 的定义位于 `sdk/defs.h`。它不包含成员函数，仅仅是�
 | canUseWard | `bool` | 指示玩家是否能使用守卫（CD清零） |
 | canSuckAttack | `bool` | 指示玩家是否能普通攻击（CD清零） |
 | placedWardCount | `int` | 属于玩家的、正在生效的守卫数目 |
-| placedWard | `std::vector<PWardInfo>` | 属于玩家的、正在生效的守卫信息 | 
+| placedWard | `std::vector<PWardInfo>` | 属于玩家的、正在生效的守卫信息 |
 | bombInSightCount | `int` | 玩家视野中出现的炸弹数目 |
 | bombInSight | `std::vector<PBombInfo>` | 玩家视野中出现的炸弹信息 |
 | unitInSightCount | `int` | 玩家视野中的**其他**单位数目 |

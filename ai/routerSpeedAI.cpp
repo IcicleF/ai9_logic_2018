@@ -4,7 +4,8 @@
 
 #include "sdk/sdk.h"
 #include "sdk/strategy/blind_item_strategy.h"
-#include "sdk/strategy/stealth_strategy.h"
+#include "sdk/strategy/randomized_attacker_strategy.h"
+#include "sdk/strategy/patrol_strategy.h"
 
 extern "C"
 {
@@ -14,7 +15,8 @@ AI_API void playerAI(const PlayerSight sight, Actions* actions)
 {
     if (sight.round == 1)
     {
-        SDK::actionMaker()->addStrategy<StealthStrategy>("RandAttack", 100);
+        SDK::actionMaker()->addStrategy<RandomizedAttackerStrategy>("RandAttack");
+        SDK::actionMaker()->addStrategy<PatrolStrategy>("Patrol");
         SDK::actionMaker()->addStrategy<BlindItemStrategy>("BlindItem");
     }
     SDK::actionMaker()->make(sight, actions);

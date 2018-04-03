@@ -11,25 +11,34 @@ Unit::Unit(GameLogic *caller)
     respawnWhen = -1;
     currentTarget = -1;
     position = Router::getInstance()->availablePosition();
+    stat = uNone;
+    waitUntil = 0;
 
     if (this->getUnitType() != VillagerType)
         return;
+
     int hajime = Randomizer::getInstance()->randWaitTime() - (WanderIntervalLB + WanderIntervalUB) / 2;
     if (hajime > 0)
+    {
+        stat = uWaiting;
         waitUntil = caller->getCurrentRound() + hajime + 1;
+    }
 }
 void Unit::getAction()
 {
     Actions act;
-    if (logic->getCurrentRound() >= waitUntil)
+    if (currentTarget != -1 && stat == uMoving)
+        return;
+    else if (stat == uMoving)
+    {
+        waitUntil = logic->getCurrentRound() + Randomizer::getInstance()->randWaitTime();
+        stat = uWaiting;
+    }
+    else if (logic->getCurrentRound() >= waitUntil)
     {
         waitUntil = IINF;
         act.emplace(SelectDestination, -1, Router::getInstance()->availablePosition());
-    }
-    else if (currentTarget == -1)
-    {
-        waitUntil = logic->getCurrentRound() + Randomizer::getInstance()->randWaitTime();
-        currentTarget = 0;
+        stat = uMoving;
     }
     logic->reportActions(this->id, act);
 }

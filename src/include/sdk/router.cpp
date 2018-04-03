@@ -17,9 +17,9 @@ Router::Router()
     Obstacles.resize(ObstacleCount);
 
     setObstacle(Obstacles[0],  0,  0, 21,  7);
-    setObstacle(Obstacles[1], 15,  9, 25, 17);
+    setObstacle(Obstacles[1], 15,  9, 25.5, 17);
     setObstacle(Obstacles[2],  0, 11, 15, 22);
-    setObstacle(Obstacles[3],  0, 22, 25, 29);
+    setObstacle(Obstacles[3],  0, 22, 25.5, 29);
     setObstacle(Obstacles[4], 31,  7, 42, 28);
     setObstacle(Obstacles[5], 42,  0, 60, 52);
     setObstacle(Obstacles[6], 22, 31, 39, 48);
@@ -117,7 +117,7 @@ std::vector<Vec2> Router::Route(Vec2 start, Vec2 end)
             if (i < VertexCount && j < VertexCount)
             {
                 edges[i][j] = edges[j][i] = Edges[i][j];
-                break;
+                continue;
             }
             bool flag = true;
             for (int u = 0; u < ObstacleCount; ++u)
@@ -153,16 +153,8 @@ std::vector<Vec2> Router::Route(Vec2 start, Vec2 end)
             }
     }
 
-    int i;
-	for (i = Points - 1; i != 0; i = prev[i])
-    {
-        if (i == -1)
-        {
-            res.clear();
-            return res;
-        }
+	for (int i = Points - 1; i != Points - 2; i = prev[i])
         res.push_back(vertex[i]);
-    }
     reverse(res.begin(), res.end());
     return res;
 }

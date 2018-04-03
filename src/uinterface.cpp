@@ -142,7 +142,7 @@ void UInterface::closeReplayFile()
 
     //Compressing
     remove(outfile.c_str());
-    int status = mz_zip_add_mem_to_archive_file_in_place(outfile.c_str(), "replay.json", full_json.c_str(), full_json.length() + 1, "", 0, MZ_DEFAULT_LEVEL);
+    int status = mz_zip_add_mem_to_archive_file_in_place(outfile.c_str(), "replay.json", full_json.c_str(), full_json.length(), "", 0, MZ_DEFAULT_LEVEL);
     if (!status)
         return;
     full_json.clear();

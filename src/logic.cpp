@@ -368,11 +368,6 @@ void GameLogic::getRank(int *rank)
     for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
         if (it->second->getUnitType() == PlayerType)
             pptrs.push_back(dynamic_cast<Player *>(it->second));
-    if (pptrs.size() != playerCount)
-    {
-        cout << "WTF" << endl;
-        return;
-    }
     for (int i = 0; i < playerCount; ++i)
         for (int j = i + 1; j < playerCount; ++j)
             if (!plcomp(*pptrs[i], *pptrs[j]))
@@ -382,7 +377,11 @@ void GameLogic::getRank(int *rank)
                 pptrs[j] = tmp;
             }
     for (int i = 0; i < playerCount; ++i)
+    {
+        cout << pptrs[i]->score << " ";
         rank[i] = pptrs[i]->id;
+    }
+    cout << endl;
 }
 
 //新回合刷新
@@ -668,6 +667,7 @@ void GameLogic::calcRound()
             unit.moved = true;
             if (type == SelectDestination)
             {
+                //cout << unit.id << " " << unit.position << " " << act.second.pos << endl;
                 if (!Router::getInstance()->Reachable(act.second.pos))
                 {
                     unit.targets.clear();
@@ -676,6 +676,7 @@ void GameLogic::calcRound()
                 }
                 unit.targets = Router::getInstance()->Route(unit.position, act.second.pos);
                 unit.currentTarget = 0;
+                //cout << unit.targets.size() << endl;
             }
             float sigma = PlayerVelocity;
             while (true)
@@ -715,6 +716,7 @@ void GameLogic::calcRound()
                     }
                 }
             }
+            //cout << unit.id << " " << unit.position << " " << act.second.pos << endl << endl;
             addCommand(MoveTo, act.first, unit.position);
         }
     }

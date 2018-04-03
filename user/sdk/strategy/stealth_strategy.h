@@ -10,7 +10,8 @@
 class StealthStrategy : public Strategy
 {
 public:
-    StealthStrategy(int _hp_lower_bound = 20) : Strategy(), hp_lower_bound(_hp_lower_bound) { }
+    StealthStrategy(int _hp_lower_bound = 20) : Strategy(), hp_lower_bound(_hp_lower_bound),
+                                                status(ssStandby), activeRound(0) { }
     virtual ~StealthStrategy() = default;
 
     virtual void generateActions(const PlayerSight&, Actions*);

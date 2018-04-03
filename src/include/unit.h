@@ -22,6 +22,14 @@ struct Unit
     int currentTarget;
     std::vector<Vec2> targets;
 
+    enum UnitStatus
+    {
+        uNone,
+        uWaiting,
+        uMoving
+    };
+    UnitStatus stat;
+
     int waitUntil;
     int respawnWhen;
 

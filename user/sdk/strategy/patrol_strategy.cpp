@@ -16,13 +16,13 @@ void PatrolStrategy::generateActions(const PlayerSight &sight, Actions *actions)
             status = psStandby;
             activeRound = sight.round + Randomizer::getInstance()->randWaitTime();
         }
-        else if (status == psStandby && sight.round == activeRound)
+        else if (status == psStandby && sight.round >= activeRound)
         {
             status = psWalking;
             activeRound = 0;
             currentTarget = (currentTarget + 1) % 5;
-            Vec2 goal(Randomizer::getInstance()->randXAxis() * 4 / MapWidth,
-                      Randomizer::getInstance()->randYAxis() * 4 / MapHeight);
+            Vec2 goal(Randomizer::getInstance()->randXAxis() * 4 / MapWidth - 2,
+                      Randomizer::getInstance()->randYAxis() * 4 / MapHeight - 2);
             switch (currentTarget)
             {
                 case 0:
