@@ -102,7 +102,7 @@ void UInterface::run()
         return;
     fprintf(fout, ", %s", jsoncmd.c_str());
     */
-    full_json += jsoncmd;
+    full_json += ", " + jsoncmd;
 }
 void UInterface::getCommands(char* commandStr)
 {
@@ -126,7 +126,7 @@ void UInterface::closeReplayFile()
     fprintf(fout, "(],\"participants\":%d,\"rounds\":%d,)", logic.getPlayerCount(), logic.getCurrentRound());
     */
     full_json += "],\"participants\":" + to_string(logic.getPlayerCount())
-                 + ",\"rounds\":" + to_string(logic.getCurrentRound()) + "%d,";
+                 + ",\"rounds\":" + to_string(logic.getCurrentRound()) + ",";
 
     Json::Value jn;
     for (auto id : ids)
@@ -141,6 +141,7 @@ void UInterface::closeReplayFile()
     full_json += "\"names\":" + fw.write(jn) + "}";
 
     //Compressing
+    remove(outfile.c_str());
     int status = mz_zip_add_mem_to_archive_file_in_place(outfile.c_str(), "replay.json", full_json.c_str(), full_json.length() + 1, "", 0, MZ_DEFAULT_LEVEL);
     if (!status)
         return;
