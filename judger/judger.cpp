@@ -33,7 +33,7 @@ int main(int argc, char** argv)
     }
     int playerNum = stoi(parm["players"]);
 
-    int maxRounds = 5000;
+    int maxRounds = 3000;
     if (parm.find("rounds") != parm.end())
         maxRounds = stoi(parm["rounds"]);
 

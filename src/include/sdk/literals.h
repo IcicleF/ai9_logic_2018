@@ -48,7 +48,7 @@ const float BombRadius = 10.0;                  //炸弹的爆炸半径
 
 const int WardPrice = 5;                        //守卫的价格
 const int WardCD = 200;                         //使用守卫的CD（内部回合数）
-const int WardDuration = 100;                   //守卫的持续时间（内部回合数）
+const int WardDuration = 150;                   //守卫的持续时间（内部回合数）
 const float WardRadius = 30.0;                  //守卫的监视半径
 const float WardPlaceRadius = 7.0;              //守卫的放置半径
 
@@ -69,7 +69,7 @@ enum DayPeriod
 /*
  *  游戏控制
  */
-const int RespawnTime = 100;                    //基础重生时间（内部回合数）
+const int RespawnTime = 80;                     //基础重生时间（内部回合数）
 const int EnemyKillBonus = 1;                   //击杀敌人获得的基础奖励分数
 const int GameSetLimit = 20;                    //使游戏结束的分值
 
