@@ -370,7 +370,7 @@ void GameLogic::getRank(int *rank)
             pptrs.push_back(dynamic_cast<Player *>(it->second));
     for (int i = 0; i < playerCount; ++i)
         for (int j = i + 1; j < playerCount; ++j)
-            if (!plcomp(*pptrs[i], *pptrs[j]))
+            if (plcomp(*pptrs[i], *pptrs[j]))
             {
                 Player* tmp = pptrs[i];
                 pptrs[i] = pptrs[j];
