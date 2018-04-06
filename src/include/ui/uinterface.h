@@ -14,8 +14,6 @@
 #include "../sdk/actions.h"
 #include "../logic.h"
 
-typedef DllInterface<const PlayerSight, Actions*> AInterface;
-
 class UInterface
 {
 public:
@@ -43,7 +41,7 @@ private:
     int n;
     std::vector<int> ids;
     std::map<int, std::string> names;
-    std::vector<AInterface*> dlls;
+    std::vector<DllInterface*> dlls;
 
     std::string jsoncmd;
     std::string full_json;

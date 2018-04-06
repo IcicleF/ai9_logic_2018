@@ -64,7 +64,7 @@ bool UInterface::loadAI(const char* aiPath, int playerID)
 {
     int ind = mapInnerID(playerID);
 
-    dlls[ind] = new AInterface;
+    dlls[ind] = new DllInterface;
     dlls[ind]->playerID = playerID;
     bool res = dlls[ind]->load(aiPath);
 

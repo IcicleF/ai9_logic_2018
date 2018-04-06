@@ -378,7 +378,7 @@ void GameLogic::getRank(int *rank)
             }
     for (int i = 0; i < playerCount; ++i)
         rank[i] = pptrs[i]->id;
-    cout << endl;
+    //cout << endl;
 }
 
 //新回合刷新
