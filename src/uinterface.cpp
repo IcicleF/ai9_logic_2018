@@ -31,10 +31,7 @@ void UInterface::setReplayFile(const char* rf)
         fout = nullptr;
     fprintf(fout, "{\"gameinfo\":[");
     */
-    string s(rf);
-    if (s.substr(s.length() - 4) != ".zip")
-        s += ".zip";
-    outfile = s;
+    outfile = string(rf);
 
     full_json = "{\"gameinfo\":[";
 }
