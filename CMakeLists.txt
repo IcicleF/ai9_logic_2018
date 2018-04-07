@@ -28,9 +28,7 @@ aux_source_directory(src SOURCES)
 add_library(lib_ai9_logic_2018 OBJECT src/json/json.h src/json/json-forwards.h src/jsoncpp.cpp src/miniz/miniz.h src/miniz/miniz.cpp src/include/sdk/strategy/escape_strategy.h src/include/sdk/strategy/escape_strategy.cpp src/include/sdk/strategy/focus_attack_strategy.h src/include/sdk/strategy/focus_attack_strategy.cpp src/include/sdk/strategy/patrol_strategy.h src/include/sdk/strategy/patrol_strategy.cpp src/include/sdk/strategy/randomized_attacker_strategy.h src/include/sdk/strategy/randomized_attacker_strategy.cpp src/include/sdk/strategy/stealth_strategy.h src/include/sdk/strategy/stealth_strategy.cpp src/include/sdk/strategy/strategy.h src/include/sdk/strategy/tracer_strategy.h src/include/sdk/strategy/tracer_strategy.cpp src/include/sdk/actions.cpp src/include/sdk/actions.h src/include/sdk/defs.h src/include/sdk/literals.h src/include/sdk/randomizer.h src/include/sdk/randomizer.cpp src/include/sdk/router.cpp src/include/sdk/router.h src/include/sdk/sdk.h src/include/sdk/sdk.cpp src/include/sdk/vec2.h src/include/ui/uiapi.h src/include/ui/uinterface.h src/include/dllinterface.h src/include/idmgr.h src/include/logic.h src/include/mapinfo.h src/include/idmgr.h src/include/unit.h src/idmgr.cpp src/logic.cpp src/mapinfo.cpp src/uiapi.cpp src/uinterface.cpp src/unit.cpp src/dllinterface.cpp)
 add_library(lib_logic SHARED $<TARGET_OBJECTS:lib_ai9_logic_2018>)
 
-add_executable(api_test dlltest/dlltest_main.cpp)
 add_executable(judger judger/judger.cpp)
-target_link_libraries(api_test lib_logic)
 target_link_libraries(judger lib_logic)
 
 add_subdirectory(ai)
