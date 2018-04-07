@@ -13,13 +13,13 @@ extern "C"
 //Standard AI interface (called once per round in 'invokeAI')
 AI_API void playerAI(const PlayerSight sight, Actions* actions)
 {
-    if (sight.round == 1)
-    {
-        SDK::actionMaker()->addStrategy<RandomizedAttackerStrategy>("RandAttack");
-        SDK::actionMaker()->addStrategy<PatrolStrategy>("Patrol");
-        SDK::actionMaker()->addStrategy<BlindItemStrategy>("BlindItem");
-    }
-    SDK::actionMaker()->make(sight, actions);
+    static RandomizedAttackerStrategy attackerStrategy;
+    static PatrolStrategy patrolStrategy;
+    static BlindItemStrategy blindItemStrategy;
+
+    attackerStrategy.generateActions(sight, actions);
+    patrolStrategy.generateActions(sight, actions);
+    blindItemStrategy.generateActions(sight, actions);
 }
 
 }

@@ -25,14 +25,7 @@ UInterface* UInterface::getInstance()
 }
 void UInterface::setReplayFile(const char* rf)
 {
-    /*
-    fout = fopen(rf, "w");
-    if (!fout)
-        fout = nullptr;
-    fprintf(fout, "{\"gameinfo\":[");
-    */
     outfile = string(rf);
-
     full_json = "{\"gameinfo\":[";
 }
 void UInterface::init(int playerCount)
@@ -40,11 +33,6 @@ void UInterface::init(int playerCount)
     n = playerCount;
     logic.startGame(n);
     jsoncmd = logic.getCommands();
-    /*
-    if (fout == nullptr)
-        return;
-    fprintf(fout, "%s", jsoncmd.c_str());
-    */
     full_json += jsoncmd;
 
     ids.assign(n, -1);
@@ -94,11 +82,6 @@ void UInterface::run()
 {
     logic.calcRound();
     jsoncmd = logic.getCommands();
-    /*
-    if (fout == nullptr)
-        return;
-    fprintf(fout, ", %s", jsoncmd.c_str());
-    */
     full_json += ", " + jsoncmd;
 }
 void UInterface::getCommands(char* commandStr)
@@ -117,11 +100,6 @@ void UInterface::getRank(int* playerRank)
 }
 void UInterface::closeReplayFile()
 {
-    /*
-    if (fout == nullptr)
-        return;
-    fprintf(fout, "(],\"participants\":%d,\"rounds\":%d,)", logic.getPlayerCount(), logic.getCurrentRound());
-    */
     full_json += "],\"participants\":" + to_string(logic.getPlayerCount())
                  + ",\"rounds\":" + to_string(logic.getCurrentRound()) + ",";
 
@@ -130,11 +108,6 @@ void UInterface::closeReplayFile()
         jn[to_string(id)] = names[id];
 
     Json::FastWriter fw;
-    /*
-    fprintf(fout, "\"names\":%s}", fw.write(jn).c_str());
-    fclose(fout);
-    fout = nullptr;
-    */
     full_json += "\"names\":" + fw.write(jn) + "}";
 
     //Compressing
