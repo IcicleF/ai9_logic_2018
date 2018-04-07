@@ -10,11 +10,11 @@
 class PatrolStrategy : public Strategy
 {
 public:
-    PatrolStrategy() : Strategy(), status(psStandby), activeRound(0) { }
+    PatrolStrategy() : Strategy(), activeRound(0) { }
     virtual ~PatrolStrategy() = default;
 
     /**
-     * 沿着地图最外圈逆时针旋转。
+     * 沿着地图逆时针旋转。
      * 每次选择位置的时候会在一个区域内随机，而不会是简单的直行。
      */
     virtual void generateActions(const PlayerSight&, Actions*);
@@ -28,6 +28,7 @@ private:
      */
     int currentTarget;
     int activeRound;
+    Vec2 goal;
 };
 
 #endif //PATROL_STRATEGY_H

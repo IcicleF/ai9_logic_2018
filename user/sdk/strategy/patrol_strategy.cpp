@@ -9,6 +9,11 @@ using namespace std;
 
 void PatrolStrategy::generateActions(const PlayerSight &sight, Actions *actions)
 {
+    if (sight.round == 0)
+    {
+        currentTarget = 0;
+        status = psStandby;
+    }
     if (sight.velocity == Vec2())
     {
         if (status == psWalking)    //开始等待
