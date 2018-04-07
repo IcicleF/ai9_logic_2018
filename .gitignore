@@ -6,7 +6,7 @@
 ai/CMakeFiles/*
 /build/*
 /user/build/*
-
+/distribute/*
 
 # MinGW Makefile
 
