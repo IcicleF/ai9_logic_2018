@@ -2,6 +2,8 @@
 // Created by icyf on 2018-4-6.
 //
 
+#ifndef _WIN32
+
 #include <unistd.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -11,22 +13,24 @@
 #include <string>
 #include <sstream>
 
+#endif
+
 #include "dllinterface.h"
 
 using namespace std;
 
-const int SIZE = 64 * 1024;
+const int BUF_SIZE = 1024 * 1024;
 struct shared_mem
 {
     int written;
-    char buf[SIZE];
+    char buf[BUF_SIZE];
 };
 
 bool DllInterface::getCommands(const PlayerSight& sight, Actions* actions)
 {
     if (!(ai)) return false;
 #ifdef _WIN32
-    ai(args...);
+    ai(sight, actions);
     return true;
 #else
     int shm_id;
