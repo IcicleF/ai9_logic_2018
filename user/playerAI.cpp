@@ -1,10 +1,11 @@
 //
-// Created by IcyF on 2018/2/9.
+// This is a simple sample AI.
 //
 
 #include "sdk/sdk.h"
 #include "sdk/strategy/blind_item_strategy.h"
-#include "sdk/strategy/stealth_strategy.h"
+#include "sdk/strategy/randomized_attacker_strategy.h"
+#include "sdk/strategy/patrol_strategy.h"
 
 extern "C"
 {
@@ -12,12 +13,13 @@ extern "C"
 //Standard AI interface (called once per round in 'invokeAI')
 AI_API void playerAI(const PlayerSight sight, Actions* actions)
 {
-    if (sight.round == 1)
-    {
-        SDK::actionMaker()->addStrategy<StealthStrategy>("RandAttack", 100);
-        SDK::actionMaker()->addStrategy<BlindItemStrategy>("BlindItem");
-    }
-    SDK::actionMaker()->make(sight, actions);
+    static RandomizedAttackerStrategy attackerStrategy;
+    static PatrolStrategy patrolStrategy;
+    static BlindItemStrategy blindItemStrategy;
+
+    attackerStrategy.generateActions(sight, actions);
+    patrolStrategy.generateActions(sight, actions);
+    blindItemStrategy.generateActions(sight, actions);
 }
 
 }
