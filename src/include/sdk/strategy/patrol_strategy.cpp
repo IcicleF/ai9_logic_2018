@@ -9,7 +9,7 @@ using namespace std;
 
 void PatrolStrategy::generateActions(const PlayerSight &sight, Actions *actions)
 {
-    if (sight.round == 0)
+    if (sight.round == 1)
     {
         currentTarget = 0;
         status = psStandby;
