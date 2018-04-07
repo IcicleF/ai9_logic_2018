@@ -28,6 +28,7 @@ private:
      */
     int currentTarget;
     int activeRound;
+    Vec2 goal;
 };
 
 #endif //PATROL_STRATEGY_H

@@ -8,7 +8,14 @@
 #include "actions.h"
 #include "randomizer.h"
 #include "router.h"
-#include "strategy/actionmaker.h"
+
+#include "strategy/blind_item_strategy.h"
+#include "strategy/escape_strategy.h"
+#include "strategy/focus_attack_strategy.h"
+#include "strategy/patrol_strategy.h"
+#include "strategy/randomized_attacker_strategy.h"
+#include "strategy/stealth_strategy.h"
+#include "strategy/tracer_strategy.h"
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #define AI_API __declspec(dllexport)
@@ -59,12 +66,6 @@ namespace SDK
      * @return 随机坐标
      */
     Vec2 randPosition();
-
-    /**
-     * actionMaker: 获得一个静态的ActionMaker单例。
-     * @return 指向该ActionMaker实例的指针。
-     */
-    ActionMaker* actionMaker();
 }
 
 #endif //SDK_H
