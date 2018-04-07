@@ -8,10 +8,14 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
+#include <sys/types.h>
+#include <csignal>
+
 #include <cstdlib>
 #include <cstring>
 #include <string>
 #include <sstream>
+#include <iostream>
 
 #include <chrono>
 
@@ -79,6 +83,8 @@ bool DllInterface::getCommands(const PlayerSight& sight, Actions* actions)
             auto duration = chrono::duration_cast<chrono::milliseconds>(end_time - start_time);
             if (duration.count() > 500)
             {
+                kill(pid, SIGKILL);
+
                 actions->actions.clear();
                 shmdt(shm_addr);
                 shmctl(shm_id, IPC_RMID, NULL);
