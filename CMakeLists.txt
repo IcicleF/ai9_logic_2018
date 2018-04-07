@@ -35,6 +35,5 @@ add_subdirectory(ai)
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
 else()
-    target_link_libraries(api_test dl pthread)
     target_link_libraries(judger dl pthread)
 endif()

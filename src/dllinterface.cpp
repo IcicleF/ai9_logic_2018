@@ -13,6 +13,8 @@
 #include <string>
 #include <sstream>
 
+#include <chrono>
+
 #endif
 
 #include "dllinterface.h"
@@ -48,6 +50,9 @@ bool DllInterface::getCommands(const PlayerSight& sight, Actions* actions)
 
     shared_mem *shared = (shared_mem*)shm_addr;
     shared->written = 0;
+
+    auto start_time = chrono::system_clock::now();
+
     if ((pid = fork()) == -1)
         exit(1);
     if (pid == 0)
@@ -69,7 +74,18 @@ bool DllInterface::getCommands(const PlayerSight& sight, Actions* actions)
     else
     {
         while (shared->written == 0)
+        {
+            auto end_time = chrono::system_clock::now();
+            auto duration = chrono::duration_cast<chrono::milliseconds>(end_time - start_time);
+            if (duration.count() > 500)
+            {
+                actions->actions.clear();
+                shmdt(shm_addr);
+                shmctl(shm_id, IPC_RMID, NULL);
+                return true;
+            }
             for (int i = 0; i < 1000; ++i);
+        }
 
         istringstream ss(shared->buf);
         int count = 0;
@@ -87,7 +103,7 @@ bool DllInterface::getCommands(const PlayerSight& sight, Actions* actions)
             actions->actions[i].pos = Vec2(x, y);
         }
         shmdt(shm_addr);
-        shmctl(shm_id, IPC_RMID, NULL) ;
+        shmctl(shm_id, IPC_RMID, NULL);
     }
     return true;
 #endif
