@@ -14,6 +14,29 @@ int main(int argc, char** argv)
     map<string, string> parm;
     map<int, string> name, aipath;
 
+    if (argc == 1)
+    {
+        cout << "AI9 2018 Judger" << endl << endl;
+        cout << "Parameters：" << endl;
+        cout << "-players=M      Set the number of players to M." << endl;
+        cout << "-rounds=R       Set the maximum round to R (optional, default is 3000)." << endl;
+        cout << "-replay=F       Set the replay file name to F (optional, default is replay.zip)." << endl;
+        cout << "-nameX=N        Set the name of player #X to N (optional, default is \"Attendant\")." << endl;
+        cout << "-pathX=P        Set the AI path of player #X to P." << endl;
+        cout << endl;
+        cout << "The range of X is from 0 to M-1." << endl;
+        cout << "Unrecognized parameters will be ignored." << endl;
+        cout << endl;
+#if defined(_WIN32)
+        cout << "Example. ./judger -players=3 -rounds=2000 -path0=ai0.dll -path1=\"ai0.dll\" -path2=\"ai/ai0.dll\"" << endl;
+#elif defined(__APPLE__)
+        cout << "Example. ./judger -players=3 -rounds=2000 -path0=ai0.dylib -path1=\"ai0.dylib\" -path2=\"ai/ai0.dylib\"" << endl;
+#else
+        cout << "Example. ./judger -players=3 -rounds=2000 -path0=ai0.so -path1=\"ai0.so\" -path2=\"ai/ai0.so\"" << endl;
+#endif
+        return 0;
+    }
+
     for (int i = 1; i < argc; ++i)
     {
         string s(argv[i]);
@@ -28,10 +51,15 @@ int main(int argc, char** argv)
 
     if (parm.find("players") == parm.end())
     {
-        cout << "Players count not given!" << endl;
+        cout << "Player count not given!" << endl;
         return 1;
     }
     int playerNum = stoi(parm["players"]);
+    if (playerNum < 2 || playerNum > 8)
+    {
+        cout << "Player count out of range!" << endl;
+        return 1;
+    }
 
     int maxRounds = 3000;
     if (parm.find("rounds") != parm.end())
