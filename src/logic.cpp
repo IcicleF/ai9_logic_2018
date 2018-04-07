@@ -142,6 +142,8 @@ void GameLogic::translateCommands()
             junit["wcd"] = pl.wardCD;
             junit["acd"] = pl.suckAttackCD;
             junit["s"] = pl.score;
+            junit["kv"] = pl.killedVillager;
+            junit["ke"] = pl.killedEnemy;
         }
         round.append(junit);
     }
