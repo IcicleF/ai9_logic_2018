@@ -377,10 +377,7 @@ void GameLogic::getRank(int *rank)
                 pptrs[j] = tmp;
             }
     for (int i = 0; i < playerCount; ++i)
-	{
-		cout << pptrs[i]->score << " " << pptrs[i]->gold << endl;
         rank[i] = pptrs[i]->id;
-	}
 }
 
 //新回合刷新
