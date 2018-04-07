@@ -16,10 +16,11 @@
 #endif
 
 #include "dllinterface.h"
+#include <iostream>
 
 using namespace std;
 
-const int BUF_SIZE = 1024 * 1024;
+const int BUF_SIZE = 128 * 1024;
 struct shared_mem
 {
     int written;
@@ -29,6 +30,7 @@ struct shared_mem
 bool DllInterface::getCommands(const PlayerSight& sight, Actions* actions)
 {
     if (!(ai)) return false;
+
 #ifdef _WIN32
     ai(sight, actions);
     return true;
@@ -67,7 +69,7 @@ bool DllInterface::getCommands(const PlayerSight& sight, Actions* actions)
     else
     {
         while (shared->written == 0)
-            for (int i = 0; i < 100000; ++i);
+            for (int i = 0; i < 1000; ++i);
 
         istringstream ss(shared->buf);
         int count = 0;
@@ -85,6 +87,7 @@ bool DllInterface::getCommands(const PlayerSight& sight, Actions* actions)
             actions->actions[i].pos = Vec2(x, y);
         }
         shmdt(shm_addr);
+        shmctl(shm_id, IPC_RMID, NULL) ;
     }
     return true;
 #endif

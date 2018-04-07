@@ -134,37 +134,15 @@ float distanceTo(Vec2 start, Vec2 end);
 
 ### 预定义策略
 
-`SDK` 命名空间中包含的第四个函数允许您使用预定义的策略，方便您了解游戏的核心玩法。该函数的原型如下：
+我们为您提供了若干**预定义策略**，方便您了解游戏的核心玩法。
 
-```cpp
-ActionMaker* actionMaker();
-```
+预定义策略是我们为您提供的一些简单的游戏策略，您可以选取其中一些并应用它们；对于初学者而言，您可以尝试各种不同的组合；对于已经熟悉游戏的选手，您可以利用这些策略，某种程度上减低您的代码量。
 
-actionMaker 函数保存一个静态的 ActionMaker 局部变量，并且返回指向它的指针；通过这种方式，我们为您封装好了一个 ActionMaker 类的单例。
-
-您可以利用该单例调用预定义策略。预定义策略是我们为您提供的一些简单的游戏策略，您可以选取其中一些并应用它们；对于初学者而言，您可以尝试各种不同的组合；对于已经熟悉游戏的选手，您可以利用这些策略，某种程度上减低您的代码量。
-
-所有的预定义策略都分别以类的形式实现，这些类全部公有继承于基类 Strategy（定义于 `sdk/strategy/strategy.h`）。ActionMaker 提供了一个接口供您向其中添加策略，它的原型如下：
-
-```cpp
-template <typename Tp, typename... Types>
-void ActionMaker::addStrategy(std::string name, Types... args);
-```
-
-其中 name 是策略的名称，该名称由您来指定。您指定的各个名称应当互不重复，相同名称的策略会发生覆盖。如果您到时希望移除某个策略，您需要指定被移除策略的名称。
-
-addStrategy 是一个可变参数模板函数，它的可变参数部分是为了构造预定义策略类，因为某些预定义策略需要给定构造参数才能正常工作。该函数的使用方式就像下面这样：
-
-```cpp
-SDK::actionMaker()->addStrategy<StealthStrategy>("sample_name", 30);
-```
-
-也就是说，通过模板参数的方式指定您选择的策略，通过函数形参指定名称，以及策略所需的构造函数参数。
-
-上述代码中，类 StealthStrategy 是我们提供的预定义策略之一，其定义位于 `sdk/strategy/stealth_strategy.h`（该目录下每个以 `_strategy.h` 结尾的头文件中都包含了一个预定义策略）。`30` 则是 StealthStrategy 的构造函数参数。关于各个预定义策略的具体内容和构造参数，请参阅下表：
+所有的预定义策略都分别以类的形式实现，这些类全部公有继承于基类 Strategy（定义于 `sdk/strategy/strategy.h`）。各个预定义策略的具体内容和构造参数如下表所示：
 
 | 预定义策略类 | 构造参数 | 策略内容 |
 |--|--|--|
+| BlindItemStrategy | 无 | 周期性地购买炸弹和守卫并且在原地使用 |
 | EscapeStrategy | tries（整型，可选） | 每回合随机选取 tries 个方向，并且向离视野内单位最远的那个方向移动 |
 | FocusAttackStrategy | id（整型，必须） | 使用普通攻击和炸弹尽可能攻击编号为 id 的单位 |
 | PatrolStrategy | 无 | 持续按逆时针方向环绕场地，每次在抵达一个目标点之后随机暂停一段时间 |
@@ -172,33 +150,12 @@ SDK::actionMaker()->addStrategy<StealthStrategy>("sample_name", 30);
 | StealthStrategy | hp_lower_bound（整型，默认为 20） | 在 HP 高于 hp_lower_bound 时模拟村民运动；否则，如果有单位在普通攻击范围内，则攻击离自身最远的，并向他当回合速度的反方向逃离；如果没有，则朝视野内离自己最近的单位运动 |
 | TracerStrategy | id（整型，必须）、distance（浮点型，默认为 5.0） | 跟踪编号为 id 的单位，保持距离不小于 distance<br />如果该单位从视野中消失，立刻原地停止 |
 
-为了应用您添加好的策略，您只需在 `playerAI` 函数中调用：
+为了使用这些策略，您需要在您的 AI 函数中声明这些策略类的静态实例。例如，为了应用 BlindItemStrategy，您可以写如下的代码：
 
 ```cpp
-SDK::actionMaker()->make(sight, actions);
+static BlindItemStrategy blindItemStrategy;
+blindItemStrategy.generateActions(sight, actions);
 ```
-
-ActionMaker 就会自动应用这些策略并向 actions 中添加对应的动作。
-
-我们为您提供了三个成员函数用来移除某个或某些策略：
-
-```cpp
-void ActionMaker::removeStrategy(std::string);
-void ActionMaker::removeStrategies(StrategyType);
-void ActionMaker::removeAll();
-```
-
-`removeStrategy` 用来移除具有指定名称的策略，`removeStrategies` 用来移除具有指定类型（见下）的策略，`removeAll` 用来清空所有已添加的策略。
-
-* 需要注意的是，策略在添加后始终有效，直到它被移除。您不需要每回合都重复添加同样的策略。
-
-您也可以自行继承 Strategy 类并实现您自己的策略：首先您需要包含 `sdk/strategy/strategy.h` 并继承纯虚类 Strategy，在继承类中实现策略函数：
-
-```cpp
-virtual void generateActions(const PlayerSight &sight, Actions *actions);
-```
-
-此外，您还可以重写 getStrategyType 函数为您的策略指定一种类型（Defensive、Neutral 或 Offensive）。
 
 ## 总结
 

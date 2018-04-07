@@ -9,7 +9,13 @@ using namespace std;
 
 void PatrolStrategy::generateActions(const PlayerSight &sight, Actions *actions)
 {
-    if (sight.velocity == Vec2())
+    if (sight.round == 0)
+    {
+        currentTarget = 0;
+        status = psStandby;
+        goal = sight.pos;
+    }
+    if (sight.pos == goal)
     {
         if (status == psWalking)    //开始等待
         {
@@ -21,8 +27,8 @@ void PatrolStrategy::generateActions(const PlayerSight &sight, Actions *actions)
             status = psWalking;
             activeRound = 0;
             currentTarget = (currentTarget + 1) % 5;
-            Vec2 goal(Randomizer::getInstance()->randXAxis() * 4 / MapWidth - 2,
-                      Randomizer::getInstance()->randYAxis() * 4 / MapHeight - 2);
+            goal = Vec2(Randomizer::getInstance()->randXAxis() * 4 / MapWidth - 2,
+                        Randomizer::getInstance()->randYAxis() * 4 / MapHeight - 2);
             switch (currentTarget)
             {
                 case 0:

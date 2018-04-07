@@ -4,7 +4,6 @@
 
 #include "blind_item_strategy.h"
 #include "../randomizer.h"
-#include <iostream>
 
 using namespace std;
 

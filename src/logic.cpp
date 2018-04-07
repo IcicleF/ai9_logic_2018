@@ -377,7 +377,11 @@ void GameLogic::getRank(int *rank)
                 pptrs[j] = tmp;
             }
     for (int i = 0; i < playerCount; ++i)
+    {
+        cout << pptrs[i]->id << " " << pptrs[i]->score << " " << pptrs[i]->gold << " "
+             << pptrs[i]->killedVillager << endl;
         rank[i] = pptrs[i]->id;
+    }
     //cout << endl;
 }
 

@@ -28,9 +28,3 @@ float SDK::distanceTo(Vec2 start, Vec2 end)
 float SDK::randX() { return Randomizer::getInstance()->randXAxis(); }
 float SDK::randY() { return Randomizer::getInstance()->randYAxis(); }
 Vec2 SDK::randPosition() { return Randomizer::getInstance()->randPosition(); }
-
-ActionMaker* SDK::actionMaker()
-{
-    static ActionMaker maker;
-    return &maker;
-}
