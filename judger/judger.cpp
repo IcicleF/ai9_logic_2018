@@ -61,7 +61,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    int maxRounds = 3000;
+    int maxRounds = 1000;
     if (parm.find("rounds") != parm.end())
         maxRounds = stoi(parm["rounds"]);
 

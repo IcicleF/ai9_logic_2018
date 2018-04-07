@@ -27,8 +27,8 @@ const float SuckRange = 3.0;                    //吸血的攻击范围
 const int SuckAttackCD = 6;                     //吸血攻击的CD（内部回合数）
 
 const int InitialVillagers = 5;                 //初始村民数量 * 玩家人数
-const int WanderIntervalLB = 20;                //村民游走间隔下限（内部回合数）
-const int WanderIntervalUB = 50;                //村民游走间隔上限（内部回合数）
+const int WanderIntervalLB = 15;                //村民游走间隔下限（内部回合数）
+const int WanderIntervalUB = 30;                //村民游走间隔上限（内部回合数）
 const int CorpseLifeTime = 50;                  //尸体的留存时间（内部回合数）
 
 /*
