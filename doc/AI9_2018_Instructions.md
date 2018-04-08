@@ -138,17 +138,17 @@ float distanceTo(Vec2 start, Vec2 end);
 
 预定义策略是我们为您提供的一些简单的游戏策略，您可以选取其中一些并应用它们；对于初学者而言，您可以尝试各种不同的组合；对于已经熟悉游戏的选手，您可以利用这些策略，某种程度上减低您的代码量。
 
-所有的预定义策略都分别以类的形式实现，这些类全部公有继承于基类 Strategy（定义于 `sdk/strategy/strategy.h`）。各个预定义策略的具体内容和构造参数如下表所示：
+所有的预定义策略都分别以类的形式实现，这些类全部公有继承于基类 Strategy（定义于 `sdk/strategy/strategy.h`）。各个预定义策略的具体内容如下表所示：
 
-| 预定义策略类 | 构造参数 | 策略内容 |
+| 预定义策略类 | 策略内容 |
 |--|--|--|
-| BlindItemStrategy | 无 | 周期性地购买炸弹和守卫并且在原地使用 |
-| EscapeStrategy | tries（整型，可选） | 每回合随机选取 tries 个方向，并且向离视野内单位最远的那个方向移动 |
-| FocusAttackStrategy | id（整型，必须） | 使用普通攻击和炸弹尽可能攻击编号为 id 的单位 |
-| PatrolStrategy | 无 | 持续按逆时针方向环绕场地，每次在抵达一个目标点之后随机暂停一段时间 |
-| RandomizedAttackerStrategy | 无 | 持续对身边的随机单位使用普通攻击，每个编号最多攻击一次 |
-| StealthStrategy | hp_lower_bound（整型，默认为 20） | 在 HP 高于 hp_lower_bound 时模拟村民运动；否则，如果有单位在普通攻击范围内，则攻击离自身最远的，并向他当回合速度的反方向逃离；如果没有，则朝视野内离自己最近的单位运动 |
-| TracerStrategy | id（整型，必须）、distance（浮点型，默认为 5.0） | 跟踪编号为 id 的单位，保持距离不小于 distance<br />如果该单位从视野中消失，立刻原地停止 |
+| BlindItemStrategy | 周期性地购买炸弹和守卫并且在原地使用 |
+| EscapeStrategy | 每回合随机选取若干个方向，并且向离视野内单位最远的那个方向移动 |
+| FocusAttackStrategy |  使用普通攻击和炸弹集火视野内的单位 |
+| PatrolStrategy | 持续按逆时针方向环绕场地，依序抵达每个目标点附近，每次在抵达一个目标点之后随机暂停一段时间 |
+| RandomizedAttackerStrategy | 持续对身边的随机单位使用普通攻击，每个编号最多攻击一次 |
+| StealthStrategy | 在 HP 高于一个阈值时模拟村民运动；否则，如果有单位在普通攻击范围内，则攻击离自身最远的，并向他当回合速度的反方向逃离；如果没有，则朝视野内离自己最近的单位运动 |
+| TracerStrategy | 跟踪视野内的一个单位，并且与之保持一个最小距离<br />如果该单位从视野中消失，立刻原地停止 |
 
 为了使用这些策略，您需要在您的 AI 函数中声明这些策略类的静态实例。例如，为了应用 BlindItemStrategy，您可以写如下的代码：
 
@@ -156,6 +156,10 @@ float distanceTo(Vec2 start, Vec2 end);
 static BlindItemStrategy blindItemStrategy;
 blindItemStrategy.generateActions(sight, actions);
 ```
+
+`Strategy` 类提供函数 `Enable()` 和 `Disable()` 用以启用和禁用当前策略。调用一个被禁用的策略的 `generateActions` 不会产生任何效果。
+
+每个策略类还提供函数用以设置该策略的参数。您可以阅读对应的头文件来找到设定参数用的接口。
 
 ## 总结
 

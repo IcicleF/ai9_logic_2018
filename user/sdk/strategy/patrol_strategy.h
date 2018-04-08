@@ -10,7 +10,7 @@
 class PatrolStrategy : public Strategy
 {
 public:
-    PatrolStrategy() : Strategy(), activeRound(0) { }
+    PatrolStrategy() : Strategy() { }
     virtual ~PatrolStrategy() = default;
 
     /**
@@ -21,13 +21,12 @@ public:
     virtual StrategyType getStrategyType() { return Neutral; }
 
 private:
-    enum PatrolStatus {psStandby, psWalking} status;
+    //enum PatrolStatus {psStandby, psWalking} status;
 
     /**
      * currentTarget: 描述当前以哪个点为目标。
      */
     int currentTarget;
-    int activeRound;
     Vec2 goal;
 };
 
