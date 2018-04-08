@@ -1,11 +1,8 @@
 //
-// This is a simple sample AI.
+// A simple sample AI.
 //
 
 #include "sdk/sdk.h"
-#include "sdk/strategy/blind_item_strategy.h"
-#include "sdk/strategy/randomized_attacker_strategy.h"
-#include "sdk/strategy/patrol_strategy.h"
 
 extern "C"
 {
@@ -13,13 +10,13 @@ extern "C"
 //Standard AI interface (called once per round in 'invokeAI')
 AI_API void playerAI(const PlayerSight sight, Actions* actions)
 {
-    static RandomizedAttackerStrategy attackerStrategy;
+    static FocusAttackStrategy focusAttackStrategy;
     static PatrolStrategy patrolStrategy;
-    static BlindItemStrategy blindItemStrategy;
+    //static BlindItemStrategy blindItemStrategy;
 
-    attackerStrategy.generateActions(sight, actions);
+    focusAttackStrategy.generateActions(sight, actions);
     patrolStrategy.generateActions(sight, actions);
-    blindItemStrategy.generateActions(sight, actions);
+    //blindItemStrategy.generateActions(sight, actions);
 }
 
 }
