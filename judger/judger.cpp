@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by IcyF on 2018/3/25.
 //
 
@@ -61,7 +61,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    int maxRounds = 1000;
+    int maxRounds = 660;
     if (parm.find("rounds") != parm.end())
         maxRounds = stoi(parm["rounds"]);
 

@@ -9,6 +9,8 @@ using namespace std;
 
 void TracerStrategy::generateActions(const PlayerSight &sight, Actions *actions)
 {
+    CHECK_DISABLED
+
     for (auto uinfo : sight.unitInSight)
         if (uinfo.id == target)
         {

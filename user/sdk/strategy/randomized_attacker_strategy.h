@@ -16,13 +16,6 @@ public:
 
     virtual void generateActions(const PlayerSight&, Actions*);
     virtual StrategyType getStrategyType() { return Offensive; }
-
-private:
-    /**
-     * attacked记录被攻击过的角色，已经攻击过的则不再攻击。
-     * 这主要是为了防止击杀单位导致自身暴露。
-     */
-    std::set<int> attacked;
 };
 
 #endif //RANDOMIZED_ATTACKER_STRATEGY_H

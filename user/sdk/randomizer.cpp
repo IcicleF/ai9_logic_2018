@@ -18,7 +18,7 @@ Randomizer::Randomizer()
     RndCore = new mt19937(seed);
     XAxisRnd = new uniform_real_distribution<float>(0, MapWidth);
     YAxisRnd = new uniform_real_distribution<float>(0, MapHeight);
-    RespawnRnd = new uniform_real_distribution<float>(-1, 39);
+    RespawnRnd = new uniform_real_distribution<float>(-1, 19);
     WanderRnd = new uniform_int_distribution<int>(WanderIntervalLB, WanderIntervalUB);
 }
 Randomizer::~Randomizer()

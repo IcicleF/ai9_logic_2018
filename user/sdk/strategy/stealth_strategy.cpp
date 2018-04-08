@@ -10,6 +10,8 @@ using namespace std;
 
 void StealthStrategy::generateActions(const PlayerSight &sight, Actions *actions)
 {
+    CHECK_DISABLED
+
     if (sight.hp <= hp_lower_bound && sight.canSuckAttack && sight.unitInSightCount > 0)
     {
         PUnitInfo nearest, choice;

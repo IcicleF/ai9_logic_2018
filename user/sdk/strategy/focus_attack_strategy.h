@@ -6,15 +6,18 @@
 #define FOCUS_ATTACK_STRATEGY_H
 
 #include "strategy.h"
+#include "../literals.h"
 
 class FocusAttackStrategy : public Strategy
 {
 public:
-    FocusAttackStrategy(int _target) : Strategy(), target(_target) { }
+    FocusAttackStrategy() : Strategy(), target(-1) { }
     virtual ~FocusAttackStrategy() = default;
 
     virtual void generateActions(const PlayerSight&, Actions*);
     virtual StrategyType getStrategyType() { return Offensive; }
+
+    void setTarget(int _target) { target = _target; }
 
 private:
     int target;

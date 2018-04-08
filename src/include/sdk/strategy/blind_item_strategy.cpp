@@ -9,6 +9,8 @@ using namespace std;
 
 void BlindItemStrategy::generateActions(const PlayerSight &sight, Actions *actions)
 {
+    CHECK_DISABLED
+
     int gold = sight.gold;
     if (gold >= BombPrice)
     {
