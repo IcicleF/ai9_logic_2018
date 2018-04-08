@@ -9,6 +9,8 @@
 
 using namespace std;
 
+const int MAXPLAYERNUM = 6;
+
 int main(int argc, char** argv)
 {
     map<string, string> parm;
@@ -72,7 +74,7 @@ int main(int argc, char** argv)
     setReplayFile(replayFile.c_str());
 
     init(playerNum);
-    int id[playerNum + 5] = {0};
+    int id[MAXPLAYERNUM + 5] = {0};
     getPlayerIDs(id);
 
     for (int i = 0; i < playerNum; ++i)
@@ -107,7 +109,7 @@ int main(int argc, char** argv)
             break;
     }
 
-    int rank[playerNum + 5] = {0};
+    int rank[MAXPLAYERNUM + 5] = {0};
     getRank(rank);
 
     for (int i = 0; i < playerNum; ++i)

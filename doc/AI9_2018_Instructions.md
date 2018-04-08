@@ -81,6 +81,8 @@ PlayerSight 的定义位于 `sdk/defs.h`。它不包含成员函数，仅仅是�
 
 以上也就是您每回合能得知的全部信息。
 
+请注意，`canUseBomb` 和 `canUseWard` 属性仅考虑对应道具的 CD 而不管您是否拥有该种道具。您在发出使用道具的命令时，需要自行判断是否已经拥有该种道具。
+
 ### 使用 Actions 结构体向逻辑报告本回合动作
 
 Actions 的定义位于 `sdk/actions.h`。它仅仅封装了一个 `std::vector<Action>` 变量，同时提供 `emplace` 函数用以方便您向其中添加动作。
@@ -105,6 +107,13 @@ void emplace(ActionType type, Vec2 pos);
 | SuckAttack | 普通攻击 | target_id |
 
 NoAction 和 ContinueMovement 仅作为逻辑内部的取值而被使用，如果您向逻辑报告了 NoAction 或 ContinueMovement 动作，它们将被直接忽略。
+
+购买和使用道具时，`target_id` 应取下列二个常量之一（定义于 `sdk/defs.h`）：
+
+```cpp
+const int BombItem = 0;   //炸弹
+const int WardItem = 1;   //守卫
+```
 
 ## 使用 SDK
 
