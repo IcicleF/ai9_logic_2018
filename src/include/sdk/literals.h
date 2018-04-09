@@ -19,6 +19,8 @@ const float ObsBorder = 0.05;                   //障碍物边界向外延伸的
  */
 const int PlayerHP = 100;                       //玩家出生时HP
 const float PlayerVelocity = 2.0;               //玩家移动速度（每个内部回合）
+const int InitialGold = 15;                     //玩家的初始金钱
+
 const int BurnDamage = 5;                       //每一个灼烧周期玩家损失的HP
 const int BurnPeriod = 8;                       //灼烧周期长度（内部回合数）
 const int SuckDamage = 50;                      //吸血攻击力
@@ -70,6 +72,7 @@ enum DayPeriod
  *  游戏控制
  */
 const int RespawnTime = 40;                     //基础重生时间（内部回合数）
+const int RespawnFluctuation = 20;              //重生时间向下浮动幅度（内部回合数）
 const int EnemyKillBonus = 1;                   //击杀敌人获得的基础奖励分数
 const int GameSetLimit = 15;                    //使游戏结束的分值
 

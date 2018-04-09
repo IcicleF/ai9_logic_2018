@@ -29,6 +29,10 @@ void GameLogic::startGame(int _playerCount)         //初始化游戏，设置�
         unitInfo[playerID[i]] = new Player(this);
         unitInfo[playerID[i]]->id = playerID[i];
         addCommand(UnitSpawn, playerID[i], unitInfo[playerID[i]]->position);
+
+        Player* pl = dynamic_cast<Player*>(unitInfo[playerID[i]]);
+        pl->gold = InitialGold;
+        addCommand(GoldChange, playerID[i], InitialGold);
     }
 
     //创建初始村民
@@ -526,7 +530,7 @@ void GameLogic::calcRound()
         if (unit.getUnitType() == PlayerType && unit.hp == 0)
         {
             unit.hp = 0;
-            unit.respawnWhen = getCurrentRound() + RespawnTime;
+            unit.respawnWhen = getCurrentRound() + Randomizer::getInstance()->randSpawnTime();
             unit.velocity = Vec2();
             unit.currentTarget = -1;
             unit.targets.clear();

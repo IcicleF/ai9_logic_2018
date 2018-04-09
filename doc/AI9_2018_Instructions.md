@@ -4,7 +4,7 @@
 
 ## 前言
 
-欢迎您参加 2018 年智能体大赛。在阅读本文档之前，请先阅读
+欢迎您参加 2018 年智能体大赛。在阅读本文档之前，请先阅读逻辑参考文档。
 
 如果您阅读到此处，想必您已经熟悉逻辑运作的模式，并且做好编写 AI 并参赛的准备。为了您的方便，我们向您提供这份指导教程，使您能了解逻辑与 AI 的交互方式，以及 SDK 的使用方法。
 
@@ -50,6 +50,8 @@ AI_API void playerAI(const PlayerSight sight, Actions* actions);
 
 为了使用 `PlayerSight` 和 `Actions` 结构体，您应该在代码中包含 `sdk/sdk.h`。
 
+指针 `actions` 指向的是一个由我们预先建立好的 `Actions` 实例。您不应当更改 `actions` 指向的地址。
+
 ### 使用 PlayerSight 结构体获取视野
 
 PlayerSight 的定义位于 `sdk/defs.h`。它不包含成员函数，仅仅是封装了一些成员变量。各成员变量及它们的含义如下：
@@ -77,7 +79,7 @@ PlayerSight 的定义位于 `sdk/defs.h`。它不包含成员函数，仅仅是�
 | unitInSight | `std::vector<PUnitInfo>` | 玩家视野中的**其他**单位信息 |
 | corpseInSightCount | `int` | 玩家视野中的尸体数目 |
 | corpseInSight | `std::vector<Vec2>` | 玩家视野中的尸体位置 |
-| scoreBoard | `std::vector<int>` | 全局计分板，从高到低排列 |
+| scoreBoard | `std::vector<int>` | 全局计分板，从高到低排列的每位选手的分数 |
 
 以上也就是您每回合能得知的全部信息。
 
@@ -101,7 +103,7 @@ void emplace(ActionType type, Vec2 pos);
 |--|--|--|
 | NoAction | **仅作为内部取值而使用**：无意义的空动作 | - |
 | SelectDestination | 选择一个目标地点，并按照寻路系统给出的最短路开始向该点移动 | pos |
-| ContinueMovement | **仅作为内部取值而使用**：指示逻辑按照上一个 SelectDestination 决定的路线继续移动 | - |
+| ContinueMovement | **仅作为内部取值而使用**：指示逻辑按照上一次 SelectDestination 决定的路线继续移动 | - |
 | BuyItem | 购买道具 | target_id |
 | UseItem | 使用道具 | target_id, pos |
 | SuckAttack | 普通攻击 | target_id |
@@ -119,7 +121,7 @@ const int WardItem = 1;   //守卫
 
 我们提供一个轻量的 SDK 供您使用，使用 SDK 可以在一定程度上简化您的编程；对于刚接触本游戏的初学者而言，您还可以借助 SDK 加深对游戏机制和核心玩法的了解。
 
-要使用 SDK 只需包含 `sdk/sdk.h`。SDK 的全部内容包含在命名空间 `SDK` 中。
+您在程序中包含 `sdk/sdk.h` 时即已经可以使用 SDK。SDK 的全部内容包含在命名空间 `SDK` 中。
 
 ### SDK 函数
 
@@ -166,7 +168,14 @@ static BlindItemStrategy blindItemStrategy;
 blindItemStrategy.generateActions(sight, actions);
 ```
 
-`Strategy` 类提供函数 `Enable()` 和 `Disable()` 用以启用和禁用当前策略。调用一个被禁用的策略的 `generateActions` 不会产生任何效果。
+`Strategy` 类提供成员函数 `Enable()` 和 `Disable()` 用以启用和禁用当前策略。调用一个被禁用的策略的 `generateActions` 不会产生任何效果：
+
+```cpp
+blindItemStrategy.Disable();
+blindItemStrategy.generateActions(sight, actions);      //没有效果
+```
+
+`generateActions` 不会判断重复调用。请您确保您每回合仅调用每个预定义策略类实例的 `generateActions` 至多一次。
 
 每个策略类还提供函数用以设置该策略的参数。您可以阅读对应的头文件来找到设定参数用的接口。
 

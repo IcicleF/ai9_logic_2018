@@ -81,7 +81,7 @@ bool DllInterface::getCommands(const PlayerSight& sight, Actions* actions)
         {
             auto end_time = chrono::system_clock::now();
             auto duration = chrono::duration_cast<chrono::milliseconds>(end_time - start_time);
-            if (duration.count() > 500)
+            if (duration.count() > 150)
             {
                 kill(pid, SIGKILL);
 

@@ -19,6 +19,7 @@ public:
     Vec2 randPosition();
     bool randSpawnJudger();
     int randWaitTime();
+    int randSpawnTime();
 
 private:
     Randomizer();
@@ -27,6 +28,7 @@ private:
     std::uniform_real_distribution<float> *XAxisRnd, *YAxisRnd;
     std::uniform_real_distribution<float> *RespawnRnd;
     std::uniform_int_distribution<int> *WanderRnd;
+    std::uniform_int_distribution<int> *SpawnTimeRnd;
 };
 
 #endif //RANDOMIZER_H
