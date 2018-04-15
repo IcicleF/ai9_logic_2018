@@ -24,7 +24,7 @@ const int InitialGold = 15;                     //玩家的初始金钱
 const int BurnDamage = 5;                       //每一个灼烧周期玩家损失的HP
 const int BurnPeriod = 8;                       //灼烧周期长度（内部回合数）
 const int SuckDamage = 50;                      //吸血攻击力
-const float SuckDrainCoeff = 0.2;               //吸血攻击回复量等于攻击力乘以该补正系数
+const float SuckDrainCoeff = 0.3;               //吸血攻击回复量等于攻击力乘以该补正系数
 const float SuckRange = 4.0;                    //吸血的攻击范围
 const int SuckAttackCD = 15;                    //吸血攻击的CD（内部回合数）
 
@@ -72,7 +72,7 @@ enum DayPeriod
  *  游戏控制
  */
 const int RespawnTime = 40;                     //基础重生时间（内部回合数）
-const int RespawnFluctuation = 20;              //重生时间向下浮动幅度（内部回合数）
+const int RespawnFluctuation = 0;               //重生时间向下浮动幅度（内部回合数）
 const int EnemyKillBonus = 1;                   //击杀敌人获得的基础奖励分数
 const int GameSetLimit = 15;                    //使游戏结束的分值
 

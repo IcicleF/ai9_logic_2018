@@ -84,6 +84,7 @@ string GameLogic::getCommandTypeName(CommandType t)
     DECLARE_MAPPING(t, PlayerAttack)
     DECLARE_MAPPING(t, UnitDie)
     DECLARE_MAPPING(t, UnitSpawn)
+    DECLARE_MAPPING(t, Replacement)
     DECLARE_MAPPING(t, DayNightSwitch)
 	DECLARE_MAPPING(t, NightDaySwitch)
     DECLARE_MAPPING(t, GameSet)
@@ -106,8 +107,12 @@ void GameLogic::translateCommands()
         jcmd["id"] = cmd.unit_id;
         jcmd["x"] = toJStr(cmd.pos.x);
         jcmd["y"] = toJStr(cmd.pos.y);
-        jcmd["d"] = cmd.delta;
-        if (cmd.commandType == BombThrown || cmd.commandType == WardPlaced || cmd.commandType == UnitDie)
+        if (cmd.commandType == BombNumberChange || cmd.commandType == WardNumberChange ||
+            cmd.commandType == GoldChange || cmd.commandType == HPChange ||
+            cmd.commandType == ScoreChange)
+            jcmd["d"] = cmd.delta;
+        if (cmd.commandType == BombThrown || cmd.commandType == WardPlaced ||
+            cmd.commandType == UnitDie || cmd.commandType == Replacement)
             jcmd["tar"] = cmd.target_id;
         if (cmd.commandType == BombThrown)
         {
@@ -530,7 +535,7 @@ void GameLogic::calcRound()
         if (unit.getUnitType() == PlayerType && unit.hp == 0)
         {
             unit.hp = 0;
-            unit.respawnWhen = getCurrentRound() + Randomizer::getInstance()->randSpawnTime();
+            unit.respawnWhen = getCurrentRound() + RespawnTime;
             unit.velocity = Vec2();
             unit.currentTarget = -1;
             unit.targets.clear();
@@ -732,13 +737,39 @@ void GameLogic::calcRound()
     for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
         if (it->second->hp == 0 && it->second->respawnWhen == getCurrentRound())
         {
+            vector<int> victims;
             Unit& respawner = *(it->second);
+
             respawner.respawnWhen = -1;
             respawner.hp = PlayerHP;
             respawner.velocity = Vec2();
-            respawner.position = Router::getInstance()->availablePosition();
 
-            addCommand(UnitSpawn, respawner.id, respawner.position);
+            for (auto jt = unitInfo.begin(); jt != unitInfo.end(); ++jt)
+                if (jt->second->getUnitType() == VillagerType)
+                    victims.push_back(jt->first);
+            if (victims.empty())
+            {
+                respawner.position = Router::getInstance()->availablePosition();
+                addCommand(UnitSpawn, respawner.id, respawner.position);
+            }
+            else
+            {
+                random_shuffle(victims.begin(), victims.end());
+                int vid = victims[0];
+                respawner.position = unitInfo[vid]->position;
+                addCommand(Replacement, respawner.id, vid, 0, Vec2(), Vec2());
+
+                for (auto id : playerID)
+                    playerIDMgr[id].replace(vid, respawner.id);
+
+                for (auto jt = unitInfo.begin(); jt != unitInfo.end(); ++jt)
+                    if (jt->first == vid)
+                    {
+                        delete jt->second;
+                        unitInfo.erase(jt);
+                        break;
+                    }
+            }
         }
 
     //村民随机重生

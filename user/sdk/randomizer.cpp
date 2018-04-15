@@ -20,7 +20,6 @@ Randomizer::Randomizer()
     YAxisRnd = new uniform_real_distribution<float>(0, MapHeight);
     RespawnRnd = new uniform_real_distribution<float>(-1, 19);
     WanderRnd = new uniform_int_distribution<int>(WanderIntervalLB, WanderIntervalUB);
-    SpawnTimeRnd = new uniform_int_distribution<int>(RespawnTime - RespawnFluctuation, RespawnTime);
 }
 Randomizer::~Randomizer()
 {
@@ -50,8 +49,4 @@ bool Randomizer::randSpawnJudger()
 int Randomizer::randWaitTime()
 {
     return (*WanderRnd)(*RndCore);
-}
-int Randomizer::randSpawnTime()
-{
-    return (*SpawnTimeRnd)(*RndCore);
 }

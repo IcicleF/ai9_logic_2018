@@ -92,10 +92,10 @@ judger 在成功评测一局比赛后产生一行输出，为按名次从高到�
 
 **A: ** 请删除 CMake 产生的 CMakeFiles 文件夹和 CMakeCache.txt，然后重新 Configure。
 
-### 本地评测程序
+<br />
+**Q: ** Configure 和 Generate 都成功了，但 make 失败如何处理？
 
-**Q: ** judger 闪退？
-**A: ** 请检查您的 AI；另外 Windows 的 cmd 不支持使用 `./` ，在您编写批处理文件或使用命令提示符时，请勿使用 `./`，否则将提示：'.' 不是内部或外部命令，也不是可运行的程序或批处理文件。
+**A: ** 请先检查您 C++ 编译器的版本是否足够高，如果您的编译器不支持 C++ 11，请更新您的编译器。如果您确认您的编译器版本没有问题，那么您可能使用的是 MinGW，您需要将 make 命令替换为 mingw32-make；或者您也可以打开 MinGW 安装目录下的 bin 目录，将 mingw32-make.exe 重命名为 make.exe。
 
 ## 注意
 

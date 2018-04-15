@@ -33,6 +33,7 @@ enum CommandType
 	PlayerAttack,								//特定玩家攻击
     UnitDie,                                    //特定单位死亡
     UnitSpawn,                                  //特定单位在特定地点出生
+	Replacement,								//特定玩家取代特定村民重生
     DayNightSwitch,                             //昼夜转换
 	NightDaySwitch,								//夜昼转换
     GameSet,                                    //游戏结束，并且报告特定玩家胜利

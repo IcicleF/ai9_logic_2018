@@ -23,6 +23,8 @@ public:
     void declareVisible(int id);
     void update();
 
+    void replace(int src, int dst);
+
     bool hasOriginID(int oid) { return relation.find(oid) != relation.end(); }
     bool hasPlayerID(int pid) { return backtrace.find(pid) != backtrace.end(); }
     int getPlayerID(int oid) { return relation[oid]; }

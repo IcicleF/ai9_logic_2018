@@ -29,6 +29,16 @@ void PlayerIDManager::declareVisible(int id)
     else
         updated[id] = ++current_id;
 }
+void PlayerIDManager::replace(int src, int dst)
+{
+    if (relation.find(src) == relation.end())
+        return;
+    int pid = relation[src];
+
+    relation.erase(src);
+    relation[dst] = pid;
+    backtrace[pid] = dst;
+}
 void PlayerIDManager::update()
 {
     relation = updated;
