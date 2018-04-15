@@ -2,7 +2,7 @@
 #define LITERALS_H
 
 const float PI = 3.14159265f;
-const float EPS = 1e-3;
+const float EPS = 1e-4;
 const int IINF = 99999999;
 const float FINF = 99999999.0f;
 const unsigned int MAGIC = 0x30a54bf8;          //Magic Number!

@@ -679,7 +679,6 @@ void GameLogic::calcRound()
             unit.moved = true;
             if (type == SelectDestination)
             {
-                //cout << unit.id << " " << unit.position << " " << act.second.pos << endl;
                 if (!Router::getInstance()->Reachable(act.second.pos))
                 {
                     unit.targets.clear();
@@ -688,7 +687,6 @@ void GameLogic::calcRound()
                 }
                 unit.targets = Router::getInstance()->Route(unit.position, act.second.pos);
                 unit.currentTarget = 0;
-                //cout << unit.targets.size() << endl;
             }
             float sigma = PlayerVelocity;
             while (true)
@@ -703,7 +701,10 @@ void GameLogic::calcRound()
                 Vec2 direction = unit.targets[unit.currentTarget] - unit.position;
                 Vec2 e0 = direction / direction.length();
                 if (direction.length() - sigma < -EPS)      //走到目标地点还有剩余
+                {
                     unit.position = unit.targets[unit.currentTarget++];
+                    sigma -= direction.length();
+                }
                 else if (direction.length() - sigma > EPS)  //走不到目标地点
                 {
                     unit.velocity = e0 * PlayerVelocity;
@@ -724,11 +725,10 @@ void GameLogic::calcRound()
                         unit.velocity = Vec2();
                         unit.targets.clear();
                         unit.currentTarget = -1;
-                        break;
                     }
+                    break;
                 }
             }
-            //cout << unit.id << " " << unit.position << " " << act.second.pos << endl << endl;
             addCommand(MoveTo, act.first, unit.position);
         }
     }
