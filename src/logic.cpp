@@ -773,7 +773,15 @@ void GameLogic::calcRound()
         }
 
     //村民随机重生
-    while (Randomizer::getInstance()->randSpawnJudger())
+    float ub = RespawnRndMax / 20.0f;
+    if (unitInfo.size() - playerCount <= 20 - 1)
+    {
+        if (unitInfo.size() != playerCount)
+            ub = RespawnRndMax / (unitInfo.size() - playerCount + 1);
+        else
+            ub = RespawnRndMax / 2.0f;
+    }
+    while (Randomizer::getInstance()->randSpawnRnd() < ub)
     {
         int id = idManager.newID();
         unitInfo[id] = new Unit(this);

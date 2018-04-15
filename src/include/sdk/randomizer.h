@@ -17,7 +17,7 @@ public:
     float randXAxis();
     float randYAxis();
     Vec2 randPosition();
-    bool randSpawnJudger();
+    float randSpawnRnd();
     int randWaitTime();
 
 private:

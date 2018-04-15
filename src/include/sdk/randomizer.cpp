@@ -18,7 +18,7 @@ Randomizer::Randomizer()
     RndCore = new mt19937(seed);
     XAxisRnd = new uniform_real_distribution<float>(0, MapWidth);
     YAxisRnd = new uniform_real_distribution<float>(0, MapHeight);
-    RespawnRnd = new uniform_real_distribution<float>(-1, 19);
+    RespawnRnd = new uniform_real_distribution<float>(0, RespawnRndMax);
     WanderRnd = new uniform_int_distribution<int>(WanderIntervalLB, WanderIntervalUB);
 }
 Randomizer::~Randomizer()
@@ -42,9 +42,9 @@ Vec2 Randomizer::randPosition()
 {
     return Vec2(randXAxis(), randYAxis());
 }
-bool Randomizer::randSpawnJudger()
+float Randomizer::randSpawnRnd()
 {
-    return (*RespawnRnd)(*RndCore) < 0;
+    return (*RespawnRnd)(*RndCore);
 }
 int Randomizer::randWaitTime()
 {
