@@ -15,7 +15,7 @@
 #include <cstring>
 #include <string>
 #include <sstream>
-#include <iostream>
+#include <cstdio>
 
 #include <chrono>
 
@@ -61,6 +61,7 @@ bool DllInterface::getCommands(const PlayerSight& sight, Actions* actions)
         exit(1);
     if (pid == 0)
     {
+        freopen("/dev/null", "w", stdout);
         ai(sight, actions);
 
         ostringstream ss;
