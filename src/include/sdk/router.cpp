@@ -68,10 +68,10 @@ bool Router::Reachable(Vec2 pos)
     if (pos.x < 0 || pos.x > MapWidth || pos.y < 0 || pos.y > MapHeight)
         return false;
     for (int i = 0; i < ObstacleCount; ++i)
-        if (pos.x > Obstacles[i][0].x - ObsBorder - EPS
-            && pos.x < Obstacles[i][2].x + ObsBorder + EPS
-            && pos.y > Obstacles[i][0].y - ObsBorder - EPS
-            && pos.y < Obstacles[i][2].y + ObsBorder + EPS)
+        if (pos.x > Obstacles[i][0].x - ObsBorder + EPS
+            && pos.x < Obstacles[i][2].x + ObsBorder - EPS
+            && pos.y > Obstacles[i][0].y - ObsBorder + EPS
+            && pos.y < Obstacles[i][2].y + ObsBorder - EPS)
             return false;
     return true;
 }
