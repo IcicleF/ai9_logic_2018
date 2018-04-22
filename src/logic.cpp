@@ -291,6 +291,7 @@ PlayerSight GameLogic::getSight(int pid)
         if (flag)
             res.corpseInSight.push_back(c);
     }
+    res.corpseInSightCount = res.corpseInSight.size();
 
     //炸弹
     vector<PBombInfo> bombs = mapInfo.getBombs();
@@ -650,7 +651,7 @@ void GameLogic::calcRound()
                 {
                     unit.useWard();
                     int ward_id = mapInfo.placeWard(this, id, pos);
-                    addCommand(WardPlaced, id, ward_id, 0, unit.position, pos);
+                    addCommand(WardPlaced, id, ward_id, 0, pos, Vec2());
                 }
             }
         }
