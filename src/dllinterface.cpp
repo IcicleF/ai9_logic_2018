@@ -37,7 +37,9 @@ bool DllInterface::getCommands(const PlayerSight& sight, Actions* actions)
 {
     if (!(ai)) return false;
 
-#ifdef _WIN32
+#define USE_WINDOWS_JUDGE
+
+#ifdef USE_WINDOWS_JUDGE
     ai(sight, actions);
     return true;
 #else
