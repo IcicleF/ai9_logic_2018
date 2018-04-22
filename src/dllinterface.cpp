@@ -2,7 +2,9 @@
 // Created by icyf on 2018-4-6.
 //
 
-#ifndef _WIN32
+#define USE_WINDOWS_JUDGE
+
+#ifndef USE_WINDOWS_JUDGE
 
 #include <unistd.h>
 #include <sys/ipc.h>
@@ -19,12 +21,20 @@
 
 #include <chrono>
 
+#else
+
+#include <chrono>
+#include <thread>
+#include <atomic>
+
 #endif
 
 #include "dllinterface.h"
 #include <iostream>
 
 using namespace std;
+using chrono::system_clock;
+using chrono::milliseconds;
 
 const int BUF_SIZE = 128 * 1024;
 struct shared_mem
@@ -37,11 +47,24 @@ bool DllInterface::getCommands(const PlayerSight& sight, Actions* actions)
 {
     if (!(ai)) return false;
 
-#define USE_WINDOWS_JUDGE
-
 #ifdef USE_WINDOWS_JUDGE
-    ai(sight, actions);
-    return true;
+    int signal = 0;
+    auto run = [&signal, &sight, actions, this]() {
+        try {
+            ai(sight, actions);
+        }
+        catch (std::exception &e) {
+            std::cerr << e.what() << std::endl;
+            signal = -1;
+            return;
+        }
+        signal = 1;
+    };
+    thread ai(run);
+    auto terminateTime = system_clock::now() + milliseconds(150);
+    while (system_clock::now() < terminateTime && signal == 0);
+    ai.detach();
+    return signal == 1;
 #else
     int shm_id;
     char* shm_addr;
