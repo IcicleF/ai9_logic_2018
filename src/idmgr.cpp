@@ -3,11 +3,14 @@
 //
 
 #include "idmgr.h"
+#include <chrono>
+
+using namespace std;
 
 //class: IDManager
 IDManager::IDManager()
 {
-    current_id = 10;
+    current_id = (int)(chrono::system_clock::now().time_since_epoch().count() % 15);
 }
 int IDManager::newID()
 {
@@ -17,17 +20,29 @@ int IDManager::newID()
 //class: PlayerIDManager
 PlayerIDManager::PlayerIDManager()
 {
-    current_id = 0;
+    auto seed = chrono::system_clock::now().time_since_epoch().count();
+    core = new mt19937(seed);
+    idRnd = new uniform_int_distribution<int>(0, 8192);
+
     relation.clear();
     backtrace.clear();
     updated.clear();
+    used.clear();
+}
+int PlayerIDManager::newID()
+{
+    int rnd = (*idRnd)(*core);
+    while (used.find(rnd) != used.end())
+        rnd = (*idRnd)(*core);
+    used.insert(rnd);
+    return rnd;
 }
 void PlayerIDManager::declareVisible(int id)
 {
     if (relation.find(id) != relation.end())
         updated[id] = relation[id];
     else
-        updated[id] = ++current_id;
+        updated[id] = this->newID();
 }
 void PlayerIDManager::replace(int src, int dst)
 {

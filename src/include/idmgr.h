@@ -2,6 +2,8 @@
 #define IDMGR_H
 
 #include <map>
+#include <random>
+#include <set>
 #include "sdk/defs.h"
 
 //为每个单位分配UID
@@ -33,7 +35,11 @@ public:
 private:
     std::map<int, int> relation, backtrace;   //维护实际编号和玩家看到编号的对应关系
     std::map<int, int> updated;               //用于内部回合刷新时更新编号
-    int current_id;                           //下次将要指派的新编号，每次自增1
+    std::set<int> used;
+
+    std::mt19937* core;
+    std::uniform_int_distribution<int>* idRnd;
+    int newID();
 };
 
 #endif //IDMGR_H
