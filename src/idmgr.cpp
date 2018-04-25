@@ -10,7 +10,9 @@ using namespace std;
 //class: IDManager
 IDManager::IDManager()
 {
-    current_id = (int)(chrono::system_clock::now().time_since_epoch().count() % 15);
+    uniform_int_distribution<int> st(0, 15);
+    mt19937 cr(chrono::system_clock::now().time_since_epoch().count());
+    current_id = st(cr);
 }
 int IDManager::newID()
 {
