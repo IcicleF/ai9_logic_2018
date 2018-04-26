@@ -269,6 +269,7 @@ PlayerSight GameLogic::getSight(int pid)
             res.unitInSight.push_back(p);
         }
     }
+    random_shuffle(res.unitInSight.begin(), res.unitInSight.end());
     res.unitInSightCount = res.unitInSight.size();
 
     //尸体
