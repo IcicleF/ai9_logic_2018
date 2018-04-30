@@ -688,6 +688,8 @@ void GameLogic::calcRound()
                     continue;
                 }
                 unit.targets = Router::getInstance()->Route(unit.position, act.second.pos);
+                if (unit.targets.empty())
+                    continue;
                 unit.currentTarget = 0;
             }
             float sigma = PlayerVelocity;
