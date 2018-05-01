@@ -194,8 +194,13 @@ void DllInterface::getCommands(std::vector<Actions>& acts)
 
         auto end_time = chrono::system_clock::now();
         auto duration = chrono::duration_cast<chrono::milliseconds>(end_time - start_time);
-        if (duration.count() > 200)
+        if (duration.count() > 150)
+        {
+            for (int i = 0; i < n; ++i)
+                if (shared->written[i] != 1)
+                    kill(pids[i], SIGKILL);
             break;
+        }
         for (int i = 0; i < 1000; ++i);
     }
 
