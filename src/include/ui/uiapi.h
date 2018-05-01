@@ -41,6 +41,8 @@ EXPORT void setPlayerName(int, const char*);
 
 EXPORT bool loadAI(const char*, int);
 
+EXPORT void beginJudge();
+
 EXPORT bool invokeAI();
 
 EXPORT void run();
@@ -48,6 +50,8 @@ EXPORT void run();
 EXPORT void getCommands(char*);
 
 EXPORT int checkWin();
+
+EXPORT void endJudge();
 
 EXPORT void getRank(int*);
 

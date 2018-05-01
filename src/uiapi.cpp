@@ -25,6 +25,10 @@ bool loadAI(const char* aiPath, int playerID)
 {
     return UInterface::getInstance()->loadAI(aiPath, playerID);
 }
+void beginJudge()
+{
+    UInterface::getInstance()->beginJudge();
+}
 bool invokeAI()
 {
     return UInterface::getInstance()->invokeAI();
@@ -40,6 +44,10 @@ void getCommands(char* commandStr)
 int checkWin()
 {
     return UInterface::getInstance()->checkWin(false);
+}
+void endJudge()
+{
+    UInterface::getInstance()->endJudge();
 }
 void getRank(int* playerRank)
 {

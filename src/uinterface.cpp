@@ -11,13 +11,6 @@
 
 using namespace std;
 
-UInterface::~UInterface()
-{
-    for (auto dll : dlls)
-        if (dll != nullptr)
-            delete dll;
-}
-
 UInterface* UInterface::getInstance()
 {
     static UInterface instance;
@@ -36,7 +29,7 @@ void UInterface::init(int playerCount)
     full_json += jsoncmd;
 
     ids.assign(n, -1);
-    dlls.assign(n, nullptr);
+    dlls.resize(n);
 }
 void UInterface::getPlayerIDs(int* playerIDs)
 {
@@ -51,31 +44,26 @@ void UInterface::setPlayerName(int playerID, const char* name)
 bool UInterface::loadAI(const char* aiPath, int playerID)
 {
     int ind = mapInnerID(playerID);
-
-    dlls[ind] = new DllInterface;
-    dlls[ind]->playerID = playerID;
-    bool res = dlls[ind]->load(aiPath);
-
-    if (!res)
-    {
-        delete dlls[ind];
-        dlls[ind] = nullptr;
-    }
-    return res;
+    if (ind == -1)
+        return false;
+    return dlls.load(ind, aiPath);
+}
+void UInterface::beginJudge()
+{
+    dlls.startProcess();
 }
 bool UInterface::invokeAI()
 {
-    for (int i = 0; i < n; ++i)
-        if (dlls[i] == nullptr)
-            return false;
     logic.startReporting();
     logic.preCalc();
+
+    for (auto id : ids)
+        dlls.psight[mapInnerID(id)] = logic.getSight(id);
+    vector<Actions> acts;
+    dlls.getCommands(acts);
     for (int i = 0; i < n; ++i)
-    {
-        Actions acts;
-        dlls[i]->getCommands(logic.getSight(ids[i]), &acts);
-        logic.reportActions(ids[i], acts);
-    }
+        logic.reportActions(ids[i], acts[i]);
+
     return true;
 }
 void UInterface::run()
@@ -93,6 +81,10 @@ void UInterface::getCommands(char* commandStr)
 int UInterface::checkWin(bool forced)
 {
     return logic.judgeWin(forced);
+}
+void UInterface::endJudge()
+{
+    dlls.endProcess();
 }
 void UInterface::getRank(int* playerRank)
 {

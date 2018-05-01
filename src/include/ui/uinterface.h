@@ -17,17 +17,19 @@
 class UInterface
 {
 public:
-    ~UInterface();
+    ~UInterface() = default;
     static UInterface* getInstance();
 
     void init(int);
     void getPlayerIDs(int*);
     void setPlayerName(int, const char*);
     bool loadAI(const char*, int);
+    void beginJudge();
     bool invokeAI();
     void run();
     void getCommands(char*);
     int checkWin(bool);
+    void endJudge();
     void getRank(int*);
     void setReplayFile(const char*);
     void closeReplayFile();
@@ -41,7 +43,7 @@ private:
     int n;
     std::vector<int> ids;
     std::map<int, std::string> names;
-    std::vector<DllInterface*> dlls;
+    DllInterface dlls;
 
     std::string jsoncmd;
     std::string full_json;

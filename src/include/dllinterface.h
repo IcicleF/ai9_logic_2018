@@ -1,64 +1,68 @@
 //
 // Created by IcyF on 2018/2/6.
+// Now fully linux-ized.
 //
 
 #ifndef DLLINTERFACE_H
 #define DLLINTERFACE_H
 
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <dlfcn.h>
-#endif
-
 #include "sdk/actions.h"
+
+#include <dlfcn.h>
+#include <vector>
 
 class DllInterface
 {
 public:
     using AIFunction = void(*)(const PlayerSight&, Actions*);
 
-    DllInterface() = default;
+    DllInterface() : n(0), shared(nullptr) { }
     ~DllInterface()
     {
-#ifdef _WIN32
-        FreeLibrary(dll);
-#else
-        dlclose(dll);
-#endif
+        for (auto dll: dlls)
+            dlclose(dll);
     }
-    bool load(const char* fileName)
+    void resize(int _n)
     {
-#ifdef _WIN32
-        dll = LoadLibrary(fileName);
-    if (!dll)
-        return false;
-    ai = (AIFunction)GetProcAddress(dll, "playerAI");
-    if (!ai)
-        return false;
-#else
-        dll = dlopen(fileName, RTLD_NOW);
-        if (!dll)
-            return false;
-        ai = reinterpret_cast<AIFunction>(dlsym(dll, "playerAI"));
-        if (!ai)
-            return false;
-#endif
-        return true;
+        n = _n;
+        dlls.resize(n);
+        ais.resize(n);
+        pids.resize(n);
+        psight.resize(n);
     }
+    bool load(int ind, const char* fileName)
+    {
+        dlls[ind] = dlopen(fileName, RTLD_NOW);
+        if (!dlls[ind])
+            return false;
+        ais[ind] = reinterpret_cast<AIFunction>(dlsym(dlls[ind], "playerAI"));
+        return (bool)(ais[ind]);
+    }
+    void startProcess();
+    void getCommands(std::vector<Actions>&);
+    void endProcess();
 
-    bool getCommands(const PlayerSight&, Actions*);
+    int n;
+    std::vector<PlayerSight> psight;
 
 private:
-#ifdef _WIN32
-    HMODULE dll;
-#else
-    void* dll;
-#endif
-    AIFunction ai;
+    std::vector<void*> dlls;
+    std::vector<AIFunction> ais;
 
-public:
-    int playerID;
+    static const int MAX_PL = 8;
+    static const int BUF_SIZE = 128 * 1024;
+    struct shared_mem
+    {
+        int trigger, shutdown;
+        int written[MAX_PL];
+        char sight[MAX_PL][BUF_SIZE];
+        char ans[MAX_PL][BUF_SIZE];
+    };
+    shared_mem *shared;
+    int shm_id;
+    char* shm_addr;
+    std::vector<pid_t> pids;
+
 };
 
 #endif //DLLINTERFACE_H

@@ -101,6 +101,7 @@ int main(int argc, char** argv)
             return 1;
         }
 
+    beginJudge();
     for (int i = 0; i < maxRounds; ++i)
     {
         invokeAI();
@@ -108,6 +109,7 @@ int main(int argc, char** argv)
         if (checkWin() != -1)
             break;
     }
+    endJudge();
 
     int rank[MAXPLAYERNUM + 5] = {0};
     getRank(rank);
