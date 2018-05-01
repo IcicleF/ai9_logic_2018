@@ -59,7 +59,7 @@ void DllInterface::startProcess()
 
     if (pid == 0)
     {
-        //freopen("/dev/null", "w", stdout);
+        freopen("/dev/null", "w", stdout);
         if (cur == -1)
             exit(1);
         while (shared->shutdown == 0)
