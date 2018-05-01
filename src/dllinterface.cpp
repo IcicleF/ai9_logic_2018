@@ -122,6 +122,7 @@ void DllInterface::startProcess()
             }
         }
         shmdt(shm_addr);
+        exit(0);
     }
 }
 
@@ -193,12 +194,8 @@ void DllInterface::getCommands(std::vector<Actions>& acts)
 
         auto end_time = chrono::system_clock::now();
         auto duration = chrono::duration_cast<chrono::milliseconds>(end_time - start_time);
-        if (duration.count() > 150)
-        {
-            for (auto pid: pids)
-                kill(pid, SIGKILL);
+        if (duration.count() > 200)
             break;
-        }
         for (int i = 0; i < 1000; ++i);
     }
 
