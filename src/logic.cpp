@@ -575,11 +575,14 @@ void GameLogic::calcRound()
                 }
             }
     }
-    for (auto it = damages.begin(); it != damages.end(); ++it)      //清除死亡角色的连杀记录
+    for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)      //清除死亡角色的连杀记录
     {
-        Unit& unit = *unitInfo[it->first];
+        Unit& unit = *(it->second);
         if (unit.getUnitType() == PlayerType && unit.hp == 0)
-            unit.clearContinuousKill();
+        {
+            Player* pptr = dynamic_cast<Player*>(it->second);
+            pptr->continuousKill = 0;
+        }
     }
     for (auto it = unitInfo.begin(); it != unitInfo.end(); )        //清除死亡的村民
     {
