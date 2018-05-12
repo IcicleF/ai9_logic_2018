@@ -49,9 +49,9 @@ void endJudge()
 {
     UInterface::getInstance()->endJudge();
 }
-void getRank(int* playerRank)
+void getRank(int* playerRank, int* playerScore)
 {
-    UInterface::getInstance()->getRank(playerRank);
+    UInterface::getInstance()->getRank(playerRank, playerScore);
 }
 void closeReplayFile()
 {

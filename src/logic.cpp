@@ -376,7 +376,7 @@ int GameLogic::judgeWin(bool forced)
     }
     return -1;
 }
-void GameLogic::getRank(int *rank)
+void GameLogic::getRank(int *rank, int *sc)
 {
     vector<Player*> pptrs;
     for (auto it = unitInfo.begin(); it != unitInfo.end(); ++it)
@@ -395,6 +395,7 @@ void GameLogic::getRank(int *rank)
         //cout << pptrs[i]->id << ": " << pptrs[i]->score << " " << pptrs[i]->gold << " "
         //     << pptrs[i]->killedVillager << " " << pptrs[i]->killedEnemy << endl;
         rank[i] = pptrs[i]->id;
+        sc[i] = pptrs[i]->score;
     }
 }
 

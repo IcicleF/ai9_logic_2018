@@ -53,7 +53,7 @@ EXPORT int checkWin();
 
 EXPORT void endJudge();
 
-EXPORT void getRank(int*);
+EXPORT void getRank(int*, int*);
 
 EXPORT void closeReplayFile();
 

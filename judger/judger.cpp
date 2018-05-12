@@ -112,13 +112,22 @@ int main(int argc, char** argv)
     endJudge();
 
     int rank[MAXPLAYERNUM + 5] = {0};
-    getRank(rank);
+    int score[MAXPLAYERNUM + 5] = {0};
+    getRank(rank, score);
 
     for (int i = 0; i < playerNum; ++i)
         for (int j = 0; j < playerNum; ++j)
             if (rank[i] == id[j])
             {
                 cout << j << " ";
+                break;
+            }
+    cout << endl;
+    for (int i = 0; i < playerNum; ++i)
+        for (int j = 0; j < playerNum; ++j)
+            if (rank[i] == id[j])
+            {
+                cout << score[i] << " ";
                 break;
             }
     cout << endl;

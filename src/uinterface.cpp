@@ -86,9 +86,9 @@ void UInterface::endJudge()
 {
     dlls.endProcess();
 }
-void UInterface::getRank(int* playerRank)
+void UInterface::getRank(int* playerRank, int* playerScore)
 {
-    logic.getRank(playerRank);
+    logic.getRank(playerRank, playerScore);
 }
 void UInterface::closeReplayFile()
 {

@@ -30,7 +30,7 @@ public:
     void getCommands(char*);
     int checkWin(bool);
     void endJudge();
-    void getRank(int*);
+    void getRank(int*, int*);
     void setReplayFile(const char*);
     void closeReplayFile();
 

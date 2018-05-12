@@ -50,7 +50,7 @@ public:
     void preCalc();
     void calcRound();
     int judgeWin(bool forced = false);
-    void getRank(int* rank);
+    void getRank(int* rank, int* sc);
 
     void addCommand(CommandType type, int id, Vec2 pos = Vec2())
     {
