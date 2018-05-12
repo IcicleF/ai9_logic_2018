@@ -697,6 +697,7 @@ void GameLogic::calcRound()
                 unit.currentTarget = 0;
             }
             float sigma = PlayerVelocity;
+            Vec2 original = unit.position;
             while (true)
             {
                 if (unit.currentTarget == unit.targets.size())
@@ -737,7 +738,8 @@ void GameLogic::calcRound()
                     break;
                 }
             }
-            addCommand(MoveTo, act.first, unit.position);
+            if (!(unit.position == original))
+                addCommand(MoveTo, act.first, unit.position);
         }
     }
 
